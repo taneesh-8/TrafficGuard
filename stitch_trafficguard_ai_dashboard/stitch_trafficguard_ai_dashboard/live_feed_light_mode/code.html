@@ -234,6 +234,7 @@
 
     </style>
 
+<script src="../config.js"></script>
 </head>
 
 <body class="bg-background text-on-surface">
@@ -1001,7 +1002,7 @@ document.addEventListener('click', function(e) {
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-const WS_URL  = 'ws://localhost:8000/ws/violations';
+const WS_URL  = (window.location.protocol === "https:" ? "wss" : "ws") + "://" + (window.TRAFFICGUARD_API_BASE || "http://localhost:8000").replace(/^https?:\/\//, "") + "/ws/violations";
 
 // How long (ms) a bounding box stays visible after detection
 

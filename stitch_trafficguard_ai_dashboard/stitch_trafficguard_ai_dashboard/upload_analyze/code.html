@@ -117,6 +117,7 @@ tailwind.config = {
   .severity-medium{ background: #e65100; color: #fff; }
   .severity-low   { background: #fcd400; color: #221b00; }
 </style>
+<script src="../config.js"></script>
 </head>
 <body class="bg-background text-on-surface min-h-screen">
 
@@ -374,7 +375,7 @@ tailwind.config = {
 // ═══════════════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════════════
-const API_BASE = "http://localhost:8000";
+const API_BASE = (window.TRAFFICGUARD_API_BASE || "http://localhost:8000");
 
 // ═══════════════════════════════════════════════════════
 // I18N DICTIONARY

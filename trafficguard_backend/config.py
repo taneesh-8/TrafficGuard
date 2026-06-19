@@ -33,5 +33,5 @@ DEDUP_WINDOW_MINUTES: int  = int(os.getenv("DEDUP_WINDOW_MINUTES", "10"))
 REOFFENDER_WINDOW_DAYS: int = int(os.getenv("REOFFENDER_WINDOW_DAYS", "7"))
 LOW_LIGHT_THRESHOLD: int   = int(os.getenv("LOW_LIGHT_THRESHOLD", "60"))
 
-UPLOADS_DIR: str  = "uploads"
-EVIDENCE_DIR: str = "evidence_output"
+UPLOADS_DIR: str  = os.getenv("UPLOADS_DIR", "uploads")
+EVIDENCE_DIR: str = os.getenv("EVIDENCE_DIR", "evidence_output")

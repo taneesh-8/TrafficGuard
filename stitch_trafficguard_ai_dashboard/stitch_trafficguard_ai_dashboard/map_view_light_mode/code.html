@@ -127,6 +127,7 @@
         ::-webkit-scrollbar-thumb { background: #E0E0E0; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #bdbdbd; }
     </style>
+<script src="../config.js"></script>
 </head>
 <body class="bg-background text-on-surface font-body-md overflow-hidden h-screen flex flex-col">
 <!-- TopNavBar -->
@@ -333,7 +334,7 @@
 // Real OSM tiles, fully navigable, live data from backend
 // ═══════════════════════════════════════════════════════
 (function () {
-  const API = 'http://localhost:8000';
+  const API = (window.TRAFFICGUARD_API_BASE || "http://localhost:8000");
 
   // ── Init Leaflet map centred on Bengaluru ──────────────────────────────
   const map = L.map('leaflet-map', {
@@ -548,7 +549,7 @@
 // buttons + zoom/locate controls fully interactive.
 // ═══════════════════════════════════════════════════════════════════════════
 (function () {
-  const API = 'http://localhost:8000';
+  const API = (window.TRAFFICGUARD_API_BASE || "http://localhost:8000");
   const canvas = document.getElementById('map-canvas');
   const ctx    = canvas.getContext('2d');
 
