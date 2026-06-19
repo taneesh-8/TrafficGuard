@@ -7,25 +7,21 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: bash render_start.sh
     plan: free
-    disk:
-      name: trafficguard-data
-      mountPath: /data
-      sizeGB: 1
     envVars:
       - key: GEMINI_API_KEY
-        sync: false          # You set this in the Render dashboard
+        sync: false
       - key: GEMINI_VISION_MODEL
         value: gemini-2.0-flash
       - key: MAPMYINDIA_REST_KEY
-        sync: false          # Optional — set in dashboard for real geocoding
+        sync: false
       - key: DATABASE_PATH
-        value: /data/trafficguard.db
+        value: trafficguard.db
       - key: UPLOADS_DIR
-        value: /data/uploads
+        value: uploads
       - key: EVIDENCE_DIR
-        value: /data/evidence_output
+        value: evidence_output
       - key: CORS_ORIGINS
-        value: "*"           # Will be tightened once frontend URL is known
+        value: "*"
       - key: AUTO_CHALLAN_CONFIDENCE_THRESHOLD
         value: "0.92"
       - key: DEDUP_WINDOW_MINUTES
@@ -41,7 +37,7 @@ services:
     name: trafficguard-frontend
     runtime: static
     staticPublishPath: stitch_trafficguard_ai_dashboard/stitch_trafficguard_ai_dashboard
-    buildCommand: echo "No build needed — pure static HTML"
+    buildCommand: echo "static"
     plan: free
     routes:
       - type: rewrite
