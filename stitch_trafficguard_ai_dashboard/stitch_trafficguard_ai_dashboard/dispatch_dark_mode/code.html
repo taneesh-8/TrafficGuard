@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TrafficGuard AI | Dispatch Enforcement</title>
+<!-- ── Theme bootstrap ── -->
+<script>(function(){document.documentElement.className=localStorage.getItem('tg_theme')||'light';})();</script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="../tg-theme.js" defer></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed-variant": "#004299",
+                        "primary-fixed-dim": "#afc6ff",
+                        "secondary-fixed": "#ffe16d",
+                        "on-tertiary-fixed": "#002105",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#fcd400",
+                        "outline": "#727786",
+                        "on-surface-variant": "#424754",
+                        "tertiary-fixed-dim": "#67df72",
+                        "background": "#F1F3F6",
+                        "on-secondary-fixed-variant": "#544600",
+                        "inverse-primary": "#afc6ff",
+                        "on-background": "#1b1c1c",
+                        "on-primary-fixed": "#001944",
+                        "tertiary-fixed": "#83fc8b",
+                        "surface-tint": "#0059c8",
+                        "secondary-fixed-dim": "#e9c400",
+                        "secondary": "#705d00",
+                        "on-tertiary-fixed-variant": "#005318",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-container": "#6e5c00",
+                        "primary-fixed": "#d9e2ff",
+                        "outline-variant": "#c2c6d6",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#fefcff",
+                        "inverse-surface": "#303030",
+                        "on-surface": "#1b1c1c",
+                        "error": "#ba1a1a",
+                        "primary-container": "#1f6feb",
+                        "inverse-on-surface": "#f3f0ef",
+                        "surface": "#fcf9f8",
+                        "surface-variant": "#e5e2e1",
+                        "surface-container-high": "#eae7e7",
+                        "surface-container": "#f0eded",
+                        "surface-dim": "#dcd9d9",
+                        "surface-container-low": "#f6f3f2",
+                        "surface-bright": "#fcf9f8",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#2874F0",
+                        "tertiary-container": "#00872d",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-secondary-fixed": "#221b00",
+                        "tertiary": "#006b22",
+                        "on-tertiary-container": "#f7fff1",
+                        "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container_max_width": "1440px",
+                        "accent_bar": "3px",
+                        "gutter": "16px",
+                        "margin_mobile": "16px",
+                        "header_height": "64px",
+                        "margin_desktop": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-h2": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "plate-display": ["JetBrains Mono"],
+                        "headline-h1": ["Inter"],
+                        "headline-h3": ["Inter"],
+                        "label-caps": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-h2": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "plate-display": ["16px", {"lineHeight": "24px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "headline-h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-h3": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pulse-red {
+            animation: pulse-red 2s infinite;
+        }
+        @keyframes pulse-red {
+            0% { transform: scale(1); opacity: 0.8; box-shadow: 0 0 0 0 rgba(186, 26, 26, 0.7); }
+            70% { transform: scale(1.1); opacity: 0.4; box-shadow: 0 0 0 15px rgba(186, 26, 26, 0); }
+            100% { transform: scale(1); opacity: 0.8; box-shadow: 0 0 0 0 rgba(186, 26, 26, 0); }
+        }
+        .map-gradient {
+            background: radial-gradient(circle at center, transparent 0%, #0D1117 90%);
+        }
+        .glow-blue {
+            box-shadow: 0 0 15px rgba(40, 116, 240, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin_desktop max-w-container_max_width mx-auto bg-surface-container-lowest dark:bg-inverse-surface border-b-[3px] border-secondary dark:border-primary-container shadow-sm dark:shadow-none h-[64px]">
+<div class="flex items-center gap-8">
+<span class="font-headline-h1 text-headline-h1 font-bold text-primary dark:text-primary-fixed-dim">TrafficGuard AI</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-on-surface-variant dark:text-outline-variant font-medium hover:bg-surface-variant dark:hover:bg-on-surface-variant transition-colors duration-200" href="../live_feed_light_mode/code.html" data-i18n="nav_live">Live Feed</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-medium hover:bg-surface-variant dark:hover:bg-on-surface-variant transition-colors duration-200" href="../map_view_light_mode/code.html" data-i18n="nav_map">Map</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-medium hover:bg-surface-variant dark:hover:bg-on-surface-variant transition-colors duration-200" href="../analytics_light_mode/code.html" data-i18n="nav_analytics">Analytics</a>
+<a class="text-primary dark:text-primary-fixed-dim font-bold border-b-2 border-primary dark:border-primary-fixed-dim pb-1 hover:bg-surface-variant dark:hover:bg-on-surface-variant transition-colors duration-200" href="#" data-i18n="nav_dispatch">Dispatch</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-medium hover:bg-surface-variant dark:hover:bg-on-surface-variant transition-colors duration-200" href="../upload_analyze/code.html" data-i18n="nav_upload">Upload &amp; Analyze</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<div class="flex bg-white/10 rounded-full p-0.5 border border-outline-variant">
+<button onclick="setLang('KN')" class="lang-pill px-2 py-0.5 text-[10px] font-bold text-outline-variant hover:text-primary rounded-full transition-all" data-lang="KN">ಕನ್ನಡ</button>
+<button onclick="setLang('EN')" class="lang-pill px-2 py-0.5 text-[10px] font-bold text-primary bg-primary-fixed rounded-full" data-lang="EN">EN</button>
+<button onclick="setLang('HI')" class="lang-pill px-2 py-0.5 text-[10px] font-bold text-outline-variant hover:text-primary rounded-full transition-all" data-lang="HI">हिं</button>
+</div>
+<span class="material-symbols-outlined text-outline-variant">notifications</span>
+<span class="material-symbols-outlined text-outline-variant" data-theme-toggle style="cursor:pointer">dark_mode</span>
+</div>
+<img class="w-8 h-8 rounded-full border border-outline-variant" data-alt="A professional portrait of a high-ranking police officer in a modern dark blue uniform. The lighting is dramatic and cinematic, with cool blue highlights reflecting off the polished badge. The background is a blurred high-tech control center filled with screens. The officer has a calm, authoritative expression, conveying reliability and technological prowess." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgdiC6gWrI6SJeOjZHEVwEfm3GY0qyur9FQ72rvNjkec0YHY_gy2GpmkN3akzfiE-gIndbn9ulypf9bz52FSrljjSxePUf99gO0tSLV55FNdiPmyhIDcLj1q-f7l5r7q45miZ_bnvkyUCXukyZFRZWEjz046yy0UQEhcs8j99_R9AQTwuZ8vLkQpGvaueSsi_Wkntg7PhMKgis5S_9as6GawDrqVs-8TwmyF618rj9bw1K12u7RTqJ0JWENzWbl_ANCSLvVB_Y1n6f"/>
+</div>
+</header>
+<!-- Sidebar -->
+<aside class="hidden lg:flex flex-col h-screen py-6 px-4 gap-2 fixed left-0 top-0 pt-20 bg-surface-container dark:bg-inverse-surface border-r border-outline-variant dark:border-outline shadow-md dark:shadow-none w-[280px] z-40">
+<div class="flex items-center gap-4 mb-8 px-2">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">shield</span>
+</div>
+<div>
+<h3 class="font-headline-h3 text-headline-h3 text-primary dark:text-primary-fixed-dim">BTP Enforcement</h3>
+<p class="text-xs text-outline-variant font-label-caps">Unit-04 Silk Board</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-variant dark:hover:bg-on-surface-variant rounded-lg" href="../live_feed_light_mode/code.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-variant dark:hover:bg-on-surface-variant rounded-lg" href="../map_view_light_mode/code.html">
+<span class="material-symbols-outlined">map</span>
+<span class="font-label-caps text-label-caps">Map View</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-variant dark:hover:bg-on-surface-variant rounded-lg" href="../analytics_light_mode/code.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Analytics</span>
+</a>
+<a class="flex items-center gap-3 bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-lg px-4 py-3 translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined">send</span>
+<span class="font-label-caps text-label-caps">Dispatch</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-variant dark:hover:bg-on-surface-variant rounded-lg" href="../upload_analyze/code.html">
+<span class="material-symbols-outlined">upload_file</span>
+<span class="font-label-caps text-label-caps">Upload &amp; Analyze</span>
+</a>
+</nav>
+<button onclick="window.location.href='../upload_analyze/code.html'" class="mt-6 mx-2 py-3 bg-primary text-white rounded-lg font-bold shadow-lg hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add_alert</span>
+            New Alert
+        </button>
+<div class="mt-auto flex flex-col gap-1">
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-variant dark:hover:bg-on-surface-variant rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-variant dark:hover:bg-on-surface-variant rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-caps text-label-caps">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="lg:ml-[280px] pt-20 p-margin_desktop flex flex-col gap-6">
+<div class="grid grid-cols-1 xl:grid-cols-10 gap-6">
+<!-- Left Cluster Map (60%) -->
+<div class="xl:col-span-6 relative h-[600px] bg-inverse-surface border border-outline dark:border-outline rounded-xl overflow-hidden shadow-xl glow-blue">
+<div class="absolute inset-0 w-full h-full grayscale opacity-40 mix-blend-overlay" data-location="Bengaluru City" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA5A7IhlrZ-gSYWpZSXn5j5f-ybnBM9VGvsM1Pgm2PjHRGJySLpk-J_FJ_pDSr_5YhZGaxXpR6dgl5Rp2E2XssInksjBV8lecNQVmh0XosdcQVx_1RgshLCLwISNQyz5-Og2R4RYSRN28wFy6z8VHztMZ4fMNOAEK4uM7zM2eEZfSUBapB028MHmMBxiusHLJz_QLLKUx0xGbP332UJYOuPfRP8htSJgeOfYcIvYSgs-Uy5L6CSqoYxjf95FpztFucSUAMnQEYRQBuo')"></div>
+<div class="absolute inset-0 map-gradient"></div>
+<!-- Animated Background Layer -->
+
+<!-- Pulse Overlays -->
+<!-- Silk Board -->
+<div class="absolute top-[60%] left-[40%] group">
+<div class="pulse-red w-12 h-12 bg-error opacity-40 rounded-full flex items-center justify-center"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+<span class="bg-error text-white font-bold text-[10px] px-2 py-0.5 rounded-full whitespace-nowrap">12 VIOLATIONS</span>
+<span class="text-white text-[11px] font-bold mt-1 drop-shadow-md">Silk Board</span>
+</div>
+<!-- Dashed Route -->
+<svg class="absolute pointer-events-none" height="100" style="left: 100%; top: -50px" width="200">
+<path class="opacity-60" d="M 0 60 Q 50 10 120 40" fill="none" stroke="#2874F0" stroke-dasharray="5,5" stroke-width="2"></path>
+</svg>
+</div>
+<!-- Marathahalli -->
+<div class="absolute top-[30%] left-[70%] group">
+<div class="pulse-red w-8 h-8 bg-[#FF9800] opacity-40 rounded-full flex items-center justify-center"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+<span class="bg-[#FF9800] text-white font-bold text-[10px] px-2 py-0.5 rounded-full whitespace-nowrap">8 VIOLATIONS</span>
+<span class="text-white text-[11px] font-bold mt-1 drop-shadow-md">Marathahalli</span>
+</div>
+</div>
+<!-- Koramangala -->
+<div class="absolute top-[45%] left-[25%] group">
+<div class="pulse-red w-6 h-6 bg-[#FFC107] opacity-40 rounded-full flex items-center justify-center"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+<span class="bg-[#FFC107] text-black font-bold text-[10px] px-2 py-0.5 rounded-full whitespace-nowrap">5 VIOLATIONS</span>
+<span class="text-white text-[11px] font-bold mt-1 drop-shadow-md">Koramangala</span>
+</div>
+</div>
+<!-- Map UI Elements -->
+<div class="absolute bottom-4 left-4 flex gap-2">
+<div class="bg-primary/20 backdrop-blur-md border border-primary/50 px-3 py-1.5 rounded-full flex items-center gap-2 shadow-lg">
+<span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+<span class="text-primary-fixed-dim text-xs font-bold font-label-caps">Recommended Deployment</span>
+</div>
+</div>
+<div class="absolute top-4 right-4 bg-inverse-surface/80 backdrop-blur-md p-3 rounded-lg border border-outline flex flex-col gap-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">local_police</span>
+<span class="text-[10px] font-bold text-outline-variant">STATIONS ACTIVE</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error text-sm">warning</span>
+<span class="text-[10px] font-bold text-outline-variant">HOTSPOTS: 03</span>
+</div>
+</div>
+</div>
+<!-- Right Dispatch Panel (40%) -->
+<div class="xl:col-span-4 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-h2 text-headline-h2 text-on-surface">Dispatch Recommendations</h2>
+<div class="flex items-center gap-1.5 bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="text-[10px] font-bold text-primary font-label-caps">AI POWERED</span>
+</div>
+</div>
+<!-- Dispatch Cards Container -->
+<div class="flex flex-col gap-4 overflow-y-auto max-h-[530px] pr-2">
+<!-- Silk Board Card -->
+<div class="bg-inverse-surface border-l-4 border-error rounded-r-lg p-4 shadow-lg hover:bg-surface-container transition-colors group">
+<div class="flex justify-between items-start mb-3">
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-headline-h3 text-headline-h3">Silk Board Junction</h4>
+<span class="bg-error text-white text-[9px] font-black px-1.5 py-0.5 rounded tracking-tighter">URGENT</span>
+</div>
+<p class="text-xs text-outline-variant mt-1">High congestion &amp; Multiple red-light violations</p>
+</div>
+<span class="material-symbols-outlined text-error group-hover:scale-110 transition-transform">emergency</span>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-4">
+<div class="bg-background rounded p-2 border border-outline/20">
+<span class="text-[10px] text-outline-variant block mb-1">VIOLATIONS</span>
+<span class="font-plate-display text-error text-lg">12</span>
+</div>
+<div class="bg-background rounded p-2 border border-outline/20">
+<span class="text-[10px] text-outline-variant block mb-1">NEAREST PS</span>
+<span class="text-xs font-bold text-on-surface">Madiwala (1.4km)</span>
+</div>
+</div>
+<button class="w-full bg-[#00C853] hover:bg-[#00E676] text-white py-2.5 rounded-md font-bold text-sm transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-base">person_add</span>
+                            Deploy 2 Officers
+                        </button>
+</div>
+<!-- Marathahalli Card -->
+<div class="bg-inverse-surface border-l-4 border-[#FF9800] rounded-r-lg p-4 shadow-lg hover:bg-surface-container transition-colors group">
+<div class="flex justify-between items-start mb-3">
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-headline-h3 text-headline-h3">Marathahalli Bridge</h4>
+<span class="bg-[#FF9800] text-white text-[9px] font-black px-1.5 py-0.5 rounded tracking-tighter">HIGH</span>
+</div>
+<p class="text-xs text-outline-variant mt-1">Stalled vehicle causing lane blockage</p>
+</div>
+<span class="material-symbols-outlined text-[#FF9800]">traffic</span>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-4">
+<div class="bg-background rounded p-2 border border-outline/20">
+<span class="text-[10px] text-outline-variant block mb-1">VIOLATIONS</span>
+<span class="font-plate-display text-[#FF9800] text-lg">08</span>
+</div>
+<div class="bg-background rounded p-2 border border-outline/20">
+<span class="text-[10px] text-outline-variant block mb-1">NEAREST PS</span>
+<span class="text-xs font-bold text-on-surface">Marathahalli PS</span>
+</div>
+</div>
+<button class="w-full bg-primary hover:opacity-90 text-white py-2.5 rounded-md font-bold text-sm transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-base">person</span>
+                            Deploy 1 Officer
+                        </button>
+</div>
+<!-- Koramangala Card -->
+<div class="bg-inverse-surface border-l-4 border-[#FFC107] rounded-r-lg p-4 shadow-lg hover:bg-surface-container transition-colors group">
+<div class="flex justify-between items-start mb-3">
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-headline-h3 text-headline-h3">Koramangala 80ft Rd</h4>
+<span class="bg-[#FFC107] text-black text-[9px] font-black px-1.5 py-0.5 rounded tracking-tighter">MONITOR</span>
+</div>
+<p class="text-xs text-outline-variant mt-1">Slow traffic moving towards Sony World</p>
+</div>
+<span class="material-symbols-outlined text-[#FFC107]">visibility</span>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-4">
+<div class="bg-background rounded p-2 border border-outline/20">
+<span class="text-[10px] text-outline-variant block mb-1">VIOLATIONS</span>
+<span class="font-plate-display text-[#FFC107] text-lg">05</span>
+</div>
+<div class="bg-background rounded p-2 border border-outline/20">
+<span class="text-[10px] text-outline-variant block mb-1">LIVE FEED</span>
+<span class="text-xs font-bold text-primary flex items-center gap-1 cursor-pointer">View Cam 12 <span class="material-symbols-outlined text-xs">open_in_new</span></span>
+</div>
+</div>
+<div class="flex items-center justify-center py-2.5 border border-dashed border-outline-variant rounded-md">
+<span class="text-xs font-bold text-outline-variant">No Action Required</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Today's Dispatch History -->
+<section class="bg-inverse-surface border border-outline dark:border-outline rounded-xl p-6 shadow-xl">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">history</span>
+<h2 class="font-headline-h2 text-headline-h2">Today's Dispatch History</h2>
+</div>
+<button class="text-xs font-bold text-primary flex items-center gap-1 hover:underline">
+                    Download Full Log
+                    <span class="material-symbols-outlined text-xs">download</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="border-b border-outline-variant">
+<th class="pb-3 font-label-caps text-label-caps text-outline-variant">TIME</th>
+<th class="pb-3 font-label-caps text-label-caps text-outline-variant">LOCATION</th>
+<th class="pb-3 font-label-caps text-label-caps text-outline-variant">ENFORCEMENT UNIT</th>
+<th class="pb-3 font-label-caps text-label-caps text-outline-variant">VIOLATION TYPE</th>
+<th class="pb-3 font-label-caps text-label-caps text-outline-variant">STATUS</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline/10">
+<tr class="hover:bg-surface-container transition-colors">
+<td class="py-4 font-plate-display text-sm">14:22:10</td>
+<td class="py-4 font-bold text-on-surface">Hebbal Flyover</td>
+<td class="py-4 text-xs text-outline-variant">Unit 12 - Officer R. Kumar</td>
+<td class="py-4">
+<span class="bg-error/10 text-error text-[10px] font-bold px-2 py-0.5 rounded border border-error/20">Overspeeding</span>
+</td>
+<td class="py-4">
+<span class="flex items-center gap-1.5 text-[#00C853] text-[10px] font-bold">
+<span class="w-1.5 h-1.5 bg-[#00C853] rounded-full"></span>
+                                    COMPLETED
+                                </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="py-4 font-plate-display text-sm">13:45:55</td>
+<td class="py-4 font-bold text-on-surface">MG Road Metro</td>
+<td class="py-4 text-xs text-outline-variant">Unit 08 - Officer S. Rao</td>
+<td class="py-4">
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded border border-primary/20">No Parking</span>
+</td>
+<td class="py-4">
+<span class="flex items-center gap-1.5 text-[#00C853] text-[10px] font-bold">
+<span class="w-1.5 h-1.5 bg-[#00C853] rounded-full"></span>
+                                    COMPLETED
+                                </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="py-4 font-plate-display text-sm">13:10:02</td>
+<td class="py-4 font-bold text-on-surface">HSR Layout Sector 2</td>
+<td class="py-4 text-xs text-outline-variant">Unit 04 - Officer M. Singh</td>
+<td class="py-4">
+<span class="bg-[#FF9800]/10 text-[#FF9800] text-[10px] font-bold px-2 py-0.5 rounded border border-[#FF9800]/20">Helmet Violation</span>
+</td>
+<td class="py-4">
+<span class="flex items-center gap-1.5 text-primary text-[10px] font-bold animate-pulse">
+<span class="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                                    IN PROGRESS
+                                </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="py-4 font-plate-display text-sm">12:55:30</td>
+<td class="py-4 font-bold text-on-surface">Indiranagar 12th Main</td>
+<td class="py-4 text-xs text-outline-variant">Unit 21 - Officer L. Fernandez</td>
+<td class="py-4">
+<span class="bg-error/10 text-error text-[10px] font-bold px-2 py-0.5 rounded border border-error/20">Wrong Way</span>
+</td>
+<td class="py-4">
+<span class="flex items-center gap-1.5 text-[#00C853] text-[10px] font-bold">
+<span class="w-1.5 h-1.5 bg-[#00C853] rounded-full"></span>
+                                    COMPLETED
+                                </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+<script>
+        // Micro-interaction for buttons — skip lang pills
+        document.querySelectorAll('button:not(.lang-pill)').forEach(btn => {
+            btn.addEventListener('mousedown', () => btn.classList.add('scale-95'));
+            btn.addEventListener('mouseup', () => btn.classList.remove('scale-95'));
+            btn.addEventListener('mouseleave', () => btn.classList.remove('scale-95'));
+        });
+
+        // Deploy buttons — show dispatch toast
+        document.querySelectorAll('button').forEach(btn => {
+            if (btn.textContent.includes('Deploy')) {
+                btn.addEventListener('click', function() {
+                    const location = this.closest('[class*="border-l-4"]')?.querySelector('h4')?.textContent || 'location';
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#00C853;color:#fff;padding:12px 24px;border-radius:8px;font-weight:700;z-index:9999;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,0.3)';
+                    toast.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Officers dispatched to ' + location;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                });
+            }
+        });
+    </script>
+<script>
+// ─── Shared i18n for Dispatch ───────────────────────
+const TG_TRANSLATIONS = {
+  EN: { nav_live:"Live Feed", nav_map:"Map", nav_analytics:"Analytics", nav_dispatch:"Dispatch", nav_upload:"Upload & Analyze" },
+  KN: { nav_live:"ನೇರ ಪ್ರಸಾರ", nav_map:"ನಕ್ಷೆ", nav_analytics:"ವಿಶ್ಲೇಷಣೆ", nav_dispatch:"ರವಾನೆ", nav_upload:"ಅಪ್‌ಲೋಡ್ ಮತ್ತು ವಿಶ್ಲೇಷಿಸಿ" },
+  HI: { nav_live:"लाइव फ़ीड", nav_map:"मानचित्र", nav_analytics:"विश्लेषण", nav_dispatch:"डिस्पैच", nav_upload:"अपलोड और विश्लेषण करें" }
+};
+function setLang(lang) {
+  localStorage.setItem('tg_lang', lang);
+  const t = TG_TRANSLATIONS[lang] || TG_TRANSLATIONS.EN;
+  document.querySelectorAll('[data-i18n]').forEach(el => { if(t[el.dataset.i18n]) el.textContent = t[el.dataset.i18n]; });
+  document.querySelectorAll('.lang-pill').forEach(p => {
+    const active = p.dataset.lang === lang;
+    p.className = 'lang-pill px-2 py-0.5 text-[10px] font-bold rounded-full transition-all ' +
+      (active ? 'text-primary bg-primary-fixed' : 'text-outline-variant hover:text-primary');
+  });
+}
+(function(){ setLang(localStorage.getItem('tg_lang') || 'EN'); })();
+</script>
+</body></html>

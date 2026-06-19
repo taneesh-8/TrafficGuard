@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TrafficGuard AI - Analytics Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-fixed-variant": "#004299",
+                    "primary-fixed-dim": "#afc6ff",
+                    "secondary-fixed": "#ffe16d",
+                    "on-tertiary-fixed": "#002105",
+                    "on-error-container": "#93000a",
+                    "secondary-container": "#fcd400",
+                    "outline": "#727786",
+                    "on-surface-variant": "#424754",
+                    "tertiary-fixed-dim": "#67df72",
+                    "background": "#fcf9f8",
+                    "on-secondary-fixed-variant": "#544600",
+                    "inverse-primary": "#afc6ff",
+                    "on-background": "#1b1c1c",
+                    "on-primary-fixed": "#001944",
+                    "tertiary-fixed": "#83fc8b",
+                    "surface-tint": "#0059c8",
+                    "secondary-fixed-dim": "#e9c400",
+                    "secondary": "#705d00",
+                    "on-tertiary-fixed-variant": "#005318",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-container": "#6e5c00",
+                    "primary-fixed": "#d9e2ff",
+                    "outline-variant": "#c2c6d6",
+                    "on-error": "#ffffff",
+                    "on-primary-container": "#fefcff",
+                    "inverse-surface": "#303030",
+                    "on-surface": "#1b1c1c",
+                    "error": "#ba1a1a",
+                    "primary-container": "#1f6feb",
+                    "inverse-on-surface": "#f3f0ef",
+                    "surface": "#fcf9f8",
+                    "surface-variant": "#e5e2e1",
+                    "surface-container-high": "#eae7e7",
+                    "surface-container": "#f0eded",
+                    "surface-dim": "#dcd9d9",
+                    "surface-container-low": "#f6f3f2",
+                    "surface-bright": "#fcf9f8",
+                    "error-container": "#ffdad6",
+                    "on-tertiary": "#ffffff",
+                    "primary": "#0056c3",
+                    "tertiary-container": "#00872d",
+                    "surface-container-highest": "#e5e2e1",
+                    "on-secondary-fixed": "#221b00",
+                    "tertiary": "#006b22",
+                    "on-tertiary-container": "#f7fff1",
+                    "on-primary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container_max_width": "1440px",
+                    "accent_bar": "3px",
+                    "gutter": "16px",
+                    "margin_mobile": "16px",
+                    "header_height": "64px",
+                    "margin_desktop": "24px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-h2": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "plate-display": ["JetBrains Mono"],
+                    "headline-h1": ["Inter"],
+                    "headline-h3": ["Inter"],
+                    "label-caps": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-h2": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "plate-display": ["16px", {"lineHeight": "24px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "headline-h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-h3": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #F1F3F6; }
+        .card-shadow { box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+        .glass-header { backdrop-filter: blur(8px); background: rgba(255, 255, 255, 0.9); }
+        .accent-border { border-bottom: 3px solid #0056c3; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .chart-bar:hover { filter: brightness(1.1); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Top Navigation Bar (Shared Component) -->
+<header class="fixed top-0 left-0 w-full z-50 glass-header h-[64px] accent-border flex justify-between items-center px-6 max-w-container_max_width mx-auto">
+<div class="flex items-center gap-8">
+<span class="font-headline-h1 text-headline-h1 font-bold text-primary">TrafficGuard AI</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-on-surface-variant font-medium font-label-caps transition-colors duration-200" href="#">Live Feed</a>
+<a class="text-on-surface-variant font-medium font-label-caps transition-colors duration-200" href="#">Map</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-caps" href="#">Analytics</a>
+<a class="text-on-surface-variant font-medium font-label-caps transition-colors duration-200" href="#">Dispatch</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden lg:flex items-center bg-surface-container rounded-full px-4 py-1 gap-2 border border-outline-variant">
+<span class="material-symbols-outlined text-[18px]">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm w-48" placeholder="Search analytics..." type="text"/>
+</div>
+<span class="material-symbols-outlined cursor-pointer hover:bg-surface-variant p-2 rounded-full">language</span>
+<span class="material-symbols-outlined cursor-pointer hover:bg-surface-variant p-2 rounded-full">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:bg-surface-variant p-2 rounded-full">dark_mode</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of a male Indian police officer in uniform, sharp and high-quality, standing in an office environment with soft professional lighting, neutral background, photorealistic style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxbSbq4TmKCEbdtrEDPlOtPdjjcTyQVXvi22TGT2VmNu1qpPnvnNb2o0cPhj175OUGy2oKcIaJ1u3RsJNxUXDG6FKIQehyMw051CRg1aT7KJzPNnGBSscGJlWIKaWEjHqCQL1tekxFqCCKTR_Rb-hzlrgiut8DnIkdflED7tGuZmgt3PhOULH7o9wl1MkpnKTAYGf42rTdcRmCVzwLslOQH2c0PM3RJxCiMSPyWq7YoEFd04I5FKdREuZKgF8j8eqMSN9BOKUKe-iF"/>
+</div>
+</div>
+</header>
+<div class="flex pt-[64px] min-h-screen">
+<!-- Sidebar (Shared Component) -->
+<aside class="hidden lg:flex flex-col h-[calc(100vh-64px)] w-[280px] fixed left-0 bg-surface-container border-r border-outline-variant py-6 px-4 gap-2">
+<div class="mb-6 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-container font-black">BTP</div>
+<div>
+<h3 class="font-headline-h3 text-headline-h3">BTP Enforcement</h3>
+<p class="text-[10px] uppercase tracking-wider text-outline">Unit-04 Silk Board</p>
+</div>
+</div>
+</div>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="font-label-caps">Map View</span>
+</a>
+<a class="flex items-center gap-3 bg-primary-container text-on-primary-container rounded-lg px-4 py-3 translate-x-1 transition-transform font-bold shadow-sm" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps">Analytics</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">send</span>
+<span class="font-label-caps">Dispatch</span>
+</a>
+<button class="mt-4 mx-2 bg-primary text-on-primary font-bold py-3 px-6 rounded-lg shadow-lg hover:opacity-90 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+                New Alert
+            </button>
+<div class="mt-auto border-t border-outline-variant pt-4 flex flex-col gap-2">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-2 hover:bg-surface-variant rounded-lg transition-all font-label-caps" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+                    Settings
+                </a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-2 hover:bg-surface-variant rounded-lg transition-all font-label-caps" href="#">
+<span class="material-symbols-outlined text-[20px]">help</span>
+                    Support
+                </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 lg:ml-[280px] p-8 max-w-7xl mx-auto w-full">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div>
+<h1 class="font-headline-h1 text-headline-h1 text-on-surface">Analytics Dashboard</h1>
+<p class="text-on-surface-variant font-body-md mt-1">Real-time enforcement metrics and compliance trends</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="bg-surface-container-lowest border border-outline-variant px-3 py-2 rounded flex items-center gap-2 cursor-pointer card-shadow">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span class="font-body-sm font-semibold">Last 7 Days</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</div>
+<button class="bg-primary text-on-primary px-4 py-2 rounded font-body-sm font-bold flex items-center gap-2 shadow-sm hover:opacity-90 transition-opacity" onclick="exportPagePDF(this)">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+                        Export PDF
+                    </button>
+<button class="border border-primary text-primary px-4 py-2 rounded font-body-sm font-bold flex items-center gap-2 hover:bg-primary-fixed transition-colors" onclick="exportPageCSV(this)">
+<span class="material-symbols-outlined text-[18px]">csv</span>
+                        Export CSV
+                    </button>
+</div>
+</div>
+<!-- KPI Row -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-5 rounded-lg border border-outline-variant card-shadow">
+<div class="flex justify-between items-start mb-2">
+<span class="text-on-surface-variant font-label-caps">Total Violations</span>
+<span class="text-primary material-symbols-outlined">warning</span>
+</div>
+<div class="flex items-baseline gap-2">
+<h2 class="text-3xl font-extrabold text-on-surface">1,247</h2>
+<span class="text-tertiary font-bold text-[12px] flex items-center">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                            12%
+                        </span>
+</div>
+<p class="text-outline text-body-sm mt-1">v/s previous period</p>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-5 rounded-lg border border-outline-variant card-shadow">
+<div class="flex justify-between items-start mb-2">
+<span class="text-on-surface-variant font-label-caps">Challans Issued</span>
+<span class="text-primary material-symbols-outlined">receipt_long</span>
+</div>
+<div class="flex items-baseline gap-2">
+<h2 class="text-3xl font-extrabold text-on-surface">186</h2>
+<span class="text-tertiary font-bold text-[12px] flex items-center">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                            8%
+                        </span>
+</div>
+<p class="text-outline text-body-sm mt-1">72% conversion rate</p>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-5 rounded-lg border border-outline-variant card-shadow">
+<div class="flex justify-between items-start mb-2">
+<span class="text-on-surface-variant font-label-caps">Reoffenders</span>
+<span class="text-primary material-symbols-outlined">person_pin</span>
+</div>
+<div class="flex items-baseline gap-2">
+<h2 class="text-3xl font-extrabold text-on-surface">23</h2>
+<span class="text-error font-bold text-[12px] flex items-center">
+<span class="material-symbols-outlined text-[14px]">add</span>
+                            3
+                        </span>
+</div>
+<p class="text-outline text-body-sm mt-1">High-risk targets</p>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest p-5 rounded-lg border border-outline-variant card-shadow">
+<div class="flex justify-between items-start mb-2">
+<span class="text-on-surface-variant font-label-caps">Avg Confidence</span>
+<span class="text-primary material-symbols-outlined">verified</span>
+</div>
+<div class="flex items-baseline gap-2">
+<h2 class="text-3xl font-extrabold text-on-surface">0.89</h2>
+<div class="h-1.5 w-16 bg-surface-variant rounded-full overflow-hidden ml-2 self-center">
+<div class="h-full bg-tertiary-container w-[89%]"></div>
+</div>
+</div>
+<p class="text-outline text-body-sm mt-1">ML Precision Score</p>
+</div>
+</div>
+<!-- Charts Row -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+<!-- Bar Chart: Violations by Type -->
+<div class="bg-surface-container-lowest p-6 rounded-lg border border-outline-variant card-shadow">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-h2 text-headline-h2">Violations by Type</h3>
+<span class="material-symbols-outlined text-outline cursor-pointer">more_horiz</span>
+</div>
+<div class="flex items-end justify-between h-48 gap-2 pt-4 px-2">
+<div class="flex flex-col items-center flex-1">
+<div class="w-full bg-primary-container rounded-t-sm chart-bar" style="height: 80%;"></div>
+<span class="text-[10px] mt-2 font-bold text-outline">HELMET</span>
+</div>
+<div class="flex flex-col items-center flex-1">
+<div class="w-full bg-primary rounded-t-sm chart-bar" style="height: 60%;"></div>
+<span class="text-[10px] mt-2 font-bold text-outline">SIGNAL</span>
+</div>
+<div class="flex flex-col items-center flex-1">
+<div class="w-full bg-primary-container rounded-t-sm chart-bar" style="height: 45%;"></div>
+<span class="text-[10px] mt-2 font-bold text-outline">MOBILE</span>
+</div>
+<div class="flex flex-col items-center flex-1">
+<div class="w-full bg-primary rounded-t-sm chart-bar" style="height: 95%;"></div>
+<span class="text-[10px] mt-2 font-bold text-outline">W-WAY</span>
+</div>
+<div class="flex flex-col items-center flex-1">
+<div class="w-full bg-primary-container rounded-t-sm chart-bar" style="height: 30%;"></div>
+<span class="text-[10px] mt-2 font-bold text-outline">SPEED</span>
+</div>
+<div class="flex flex-col items-center flex-1">
+<div class="w-full bg-primary rounded-t-sm chart-bar" style="height: 55%;"></div>
+<span class="text-[10px] mt-2 font-bold text-outline">TRIPLE</span>
+</div>
+<div class="flex flex-col items-center flex-1">
+<div class="w-full bg-primary-container rounded-t-sm chart-bar" style="height: 70%;"></div>
+<span class="text-[10px] mt-2 font-bold text-outline">PLATE</span>
+</div>
+</div>
+</div>
+<!-- Line Chart: Daily Trend -->
+<div class="bg-surface-container-lowest p-6 rounded-lg border border-outline-variant card-shadow">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-h2 text-headline-h2">Daily Violation Trend</h3>
+<div class="flex gap-2">
+<div class="flex items-center gap-1">
+<div class="w-3 h-3 bg-primary rounded-full"></div>
+<span class="text-[11px] font-bold text-outline">Violations</span>
+</div>
+</div>
+</div>
+<div class="relative h-48 w-full">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 400 100">
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#0056c3" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#0056c3" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,80 Q50,40 100,60 T200,30 T300,70 T400,20 L400,100 L0,100 Z" fill="url(#chartGradient)"></path>
+<path d="M0,80 Q50,40 100,60 T200,30 T300,70 T400,20" fill="none" stroke="#0056c3" stroke-width="3"></path>
+</svg>
+<div class="absolute bottom-0 w-full flex justify-between px-1 text-[10px] font-bold text-outline">
+<span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Heatmap & Table Row -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+<!-- Heatmap -->
+<div class="bg-surface-container-lowest p-6 rounded-lg border border-outline-variant card-shadow">
+<h3 class="font-headline-h2 text-headline-h2 mb-4">Violation Heatmap by Hour</h3>
+<div class="grid grid-cols-[30px_1fr] gap-2">
+<div class="flex flex-col justify-between py-2 text-[9px] font-bold text-outline h-[160px]">
+<span>MON</span><span>WED</span><span>FRI</span><span>SUN</span>
+</div>
+<div class="grid grid-cols-12 grid-rows-7 gap-1 h-[160px]">
+<!-- Mock Heatmap Blocks (24h simplified to 12 slots) -->
+<!-- Row 1 -->
+<div class="bg-primary opacity-20 rounded-sm"></div><div class="bg-primary opacity-10 rounded-sm"></div><div class="bg-primary opacity-30 rounded-sm"></div><div class="bg-primary opacity-60 rounded-sm"></div><div class="bg-primary opacity-80 rounded-sm"></div><div class="bg-primary opacity-90 rounded-sm"></div><div class="bg-primary opacity-60 rounded-sm"></div><div class="bg-primary opacity-40 rounded-sm"></div><div class="bg-primary opacity-80 rounded-sm"></div><div class="bg-primary opacity-50 rounded-sm"></div><div class="bg-primary opacity-20 rounded-sm"></div><div class="bg-primary opacity-10 rounded-sm"></div>
+<!-- Row 2 -->
+<div class="bg-primary opacity-10 rounded-sm"></div><div class="bg-primary opacity-10 rounded-sm"></div><div class="bg-primary opacity-40 rounded-sm"></div><div class="bg-primary opacity-70 rounded-sm"></div><div class="bg-primary opacity-90 rounded-sm"></div><div class="bg-primary opacity-100 rounded-sm"></div><div class="bg-primary opacity-80 rounded-sm"></div><div class="bg-primary opacity-50 rounded-sm"></div><div class="bg-primary opacity-90 rounded-sm"></div><div class="bg-primary opacity-60 rounded-sm"></div><div class="bg-primary opacity-30 rounded-sm"></div><div class="bg-primary opacity-10 rounded-sm"></div>
+<!-- Row 3 -->
+<div class="bg-primary opacity-20 rounded-sm"></div><div class="bg-primary opacity-10 rounded-sm"></div><div class="bg-primary opacity-30 rounded-sm"></div><div class="bg-primary opacity-50 rounded-sm"></div><div class="bg-primary opacity-70 rounded-sm"></div><div class="bg-primary opacity-80 rounded-sm"></div><div class="bg-primary opacity-50 rounded-sm"></div><div class="bg-primary opacity-40 rounded-sm"></div><div class="bg-primary opacity-70 rounded-sm"></div><div class="bg-primary opacity-40 rounded-sm"></div><div class="bg-primary opacity-20 rounded-sm"></div><div class="bg-primary opacity-10 rounded-sm"></div>
+<!-- Row 4 -->
+<div class="bg-primary opacity-10 rounded-sm"></div><div class="bg-primary opacity-20 rounded-sm"></div><div class="bg-primary opacity-40 rounded-sm"></div><div class="bg-primary opacity-60 rounded-sm"></div><div class="bg-primary opacity-80 rounded-sm"></div><div class="bg-primary opacity-90 rounded-sm"></div><div class="bg-primary opacity-60 rounded-sm"></div><div class="bg-primary opacity-40 rounded-sm"></div><div class="bg-primary opacity-80 rounded-sm"></div><div class="bg-primary opacity-50 rounded-sm"></div><div class="bg-primary opacity-20 rounded-sm"></div><div class="bg-primary opacity-10 rounded-sm"></div>
+<!-- Row 5 -->
+<div class="bg-primary opacity-10 rounded-sm"></div><div class="bg-primary opacity-10 rounded-sm"></div><div class="bg-primary opacity-30 rounded-sm"></div><div class="bg-primary opacity-70 rounded-sm"></div><div class="bg-primary opacity-100 rounded-sm"></div><div class="bg-primary opacity-100 rounded-sm"></div><div class="bg-primary opacity-80 rounded-sm"></div><div class="bg-primary opacity-50 rounded-sm"></div><div class="bg-primary opacity-100 rounded-sm"></div><div class="bg-primary opacity-70 rounded-sm"></div><div class="bg-primary opacity-30 rounded-sm"></div><div class="bg-primary opacity-10 rounded-sm"></div>
+<!-- Row 6 -->
+<div class="bg-primary opacity-20 rounded-sm"></div><div class="bg-primary opacity-10 rounded-sm"></div><div class="bg-primary opacity-30 rounded-sm"></div><div class="bg-primary opacity-50 rounded-sm"></div><div class="bg-primary opacity-70 rounded-sm"></div><div class="bg-primary opacity-80 rounded-sm"></div><div class="bg-primary opacity-50 rounded-sm"></div><div class="bg-primary opacity-40 rounded-sm"></div><div class="bg-primary opacity-70 rounded-sm"></div><div class="bg-primary opacity-40 rounded-sm"></div><div class="bg-primary opacity-20 rounded-sm"></div><div class="bg-primary opacity-10 rounded-sm"></div>
+<!-- Row 7 -->
+<div class="bg-primary opacity-10 rounded-sm"></div><div class="bg-primary opacity-20 rounded-sm"></div><div class="bg-primary opacity-40 rounded-sm"></div><div class="bg-primary opacity-60 rounded-sm"></div><div class="bg-primary opacity-80 rounded-sm"></div><div class="bg-primary opacity-90 rounded-sm"></div><div class="bg-primary opacity-60 rounded-sm"></div><div class="bg-primary opacity-40 rounded-sm"></div><div class="bg-primary opacity-80 rounded-sm"></div><div class="bg-primary opacity-50 rounded-sm"></div><div class="bg-primary opacity-20 rounded-sm"></div><div class="bg-primary opacity-10 rounded-sm"></div>
+</div>
+</div>
+<div class="flex justify-between text-[10px] font-bold text-outline mt-2 pl-[38px]">
+<span>00:00</span><span>08:00</span><span>16:00</span><span>23:59</span>
+</div>
+</div>
+<!-- Camera Performance Table -->
+<div class="bg-surface-container-lowest p-6 rounded-lg border border-outline-variant card-shadow overflow-hidden">
+<h3 class="font-headline-h2 text-headline-h2 mb-4">Camera Performance</h3>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low text-label-caps text-on-surface-variant">
+<tr>
+<th class="p-3 font-semibold">Camera</th>
+<th class="p-3 font-semibold">Trust</th>
+<th class="p-3 font-semibold text-center">Violations</th>
+<th class="p-3 font-semibold text-center">FP</th>
+<th class="p-3 font-semibold">Status</th>
+</tr>
+</thead>
+<tbody class="text-body-sm font-medium">
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors">
+<td class="p-3">SB-04-W</td>
+<td class="p-3 text-tertiary">98%</td>
+<td class="p-3 text-center">412</td>
+<td class="p-3 text-center text-error">2</td>
+<td class="p-3"><span class="px-2 py-0.5 bg-tertiary-container text-on-tertiary-container rounded-full text-[10px] font-bold">ACTIVE</span></td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors">
+<td class="p-3">SB-04-E</td>
+<td class="p-3 text-tertiary">94%</td>
+<td class="p-3 text-center">389</td>
+<td class="p-3 text-center text-error">5</td>
+<td class="p-3"><span class="px-2 py-0.5 bg-tertiary-container text-on-tertiary-container rounded-full text-[10px] font-bold">ACTIVE</span></td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors">
+<td class="p-3">SB-04-N</td>
+<td class="p-3 text-secondary">82%</td>
+<td class="p-3 text-center">245</td>
+<td class="p-3 text-center text-error">12</td>
+<td class="p-3"><span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-full text-[10px] font-bold">CALIB</span></td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors">
+<td class="p-3">SB-04-S</td>
+<td class="p-3 text-tertiary">96%</td>
+<td class="p-3 text-center">121</td>
+<td class="p-3 text-center text-error">1</td>
+<td class="p-3"><span class="px-2 py-0.5 bg-tertiary-container text-on-tertiary-container rounded-full text-[10px] font-bold">ACTIVE</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Reoffender Leaderboard -->
+<div class="bg-surface-container-lowest p-6 rounded-lg border border-outline-variant card-shadow">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-h2 text-headline-h2">Reoffender Leaderboard</h3>
+<div class="bg-surface-container-low px-3 py-1 rounded-full text-label-caps font-bold text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">flag</span>
+                        WATCHLIST (23)
+                    </div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low text-label-caps text-on-surface-variant">
+<tr>
+<th class="p-4 font-bold w-16">Rank</th>
+<th class="p-4 font-bold">Vehicle Number</th>
+<th class="p-4 font-bold">Owner Record</th>
+<th class="p-4 font-bold">Total Violations</th>
+<th class="p-4 font-bold">Last Seen</th>
+<th class="p-4 font-bold">Risk Level</th>
+<th class="p-4 font-bold text-center">Actions</th>
+</tr>
+</thead>
+<tbody class="text-body-md">
+<tr class="border-b border-outline-variant hover:bg-primary-fixed transition-all group">
+<td class="p-4">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center font-black text-on-secondary-container text-xs shadow-sm">1</div>
+</td>
+<td class="p-4 font-plate-display text-primary tracking-widest">KA 01 MR 8829</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A portrait photo of a generic civilian driver, clear features, friendly expression, blurred urban background, high-resolution photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4BLy6JWJVX6JNnMwEFkEFkR5_yy90ce7AlGHXkcCJQGJFTDM-BgjoVpCVU0Vx1w4-S-iqLcGkPoL4F7sFCaNhDtEAMQpvgQhai39dElh3qNsOPqhl4DfOV64fVmdDrzxbNFh05g-EAFS2vHNhpxT4Y5LINmBAyoNSRtH6-_FutWL0uxXDF6xrKKLAn7wxqvG9T66JmP7sslRb7rZl6lyu1QNXTbivJVcZld-6tiOHya_hUu2s_x4zYBXbjFLRj2SP9Mu7HXp6Hs6N"/>
+</div>
+<span class="font-medium">Ramesh Kumar</span>
+</div>
+</td>
+<td class="p-4 font-bold">14</td>
+<td class="p-4 text-outline font-body-sm">2h ago (Silk Board Jct)</td>
+<td class="p-4">
+<span class="bg-error text-on-error px-3 py-1 rounded-full font-bold text-[10px]">CRITICAL</span>
+</td>
+<td class="p-4 text-center">
+<button class="text-primary material-symbols-outlined hover:scale-110 transition-transform">visibility</button>
+</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-primary-fixed transition-all group">
+<td class="p-4">
+<div class="w-8 h-8 rounded-full bg-outline-variant flex items-center justify-center font-black text-on-surface text-xs shadow-sm">2</div>
+</td>
+<td class="p-4 font-plate-display text-primary tracking-widest">TN 10 AP 1102</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A portrait photo of a middle-aged female driver, neutral expression, casual attire, blurred background, professional studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGvAqMAmGNXAzvdujXu-nyGylfTRgbHArKdzWUHMaBEwjSgGYWuhxWXmHcJ4dJspROzdF8cktCW7s8lrSJp-FQQjQK3RO3I5vUr9cJsbjry41FtVyrGc9GNMiiFxzoBVp_hTGQPkHh81wxlK66tA9gBnZ0gvpdNFNuCTJh84WNcbdELbwl8H1OqBnGBV73Ky2eC8tSSiZXUB1r25hHU7CbmsAch96VebV0HYj3QNE4tr1T-M9tmgaLCQSOStlCe7M4Dkhq74602dp2"/>
+</div>
+<span class="font-medium">Suresh V.</span>
+</div>
+</td>
+<td class="p-4 font-bold">09</td>
+<td class="p-4 text-outline font-body-sm">4h ago (HSR Layout)</td>
+<td class="p-4">
+<span class="bg-error-container text-on-error-container px-3 py-1 rounded-full font-bold text-[10px]">HIGH</span>
+</td>
+<td class="p-4 text-center">
+<button class="text-primary material-symbols-outlined hover:scale-110 transition-transform">visibility</button>
+</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-primary-fixed transition-all group">
+<td class="p-4">
+<div class="w-8 h-8 rounded-full bg-outline-variant flex items-center justify-center font-black text-on-surface text-xs shadow-sm">3</div>
+</td>
+<td class="p-4 font-plate-display text-primary tracking-widest">KA 51 J 4492</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A portrait of a young male adult, casual clothing, neutral background, sharp professional quality, photorealistic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsdalxfF17fRReTFEBn5TyBpnsJcyHZ6GvStEEkMPLKBQJHBo17_BYVcUJ5i8BE8kop-qiSFhBXhL9Qcpk1vwGFmVRPe61eE2Np7kcGw-4hlLQaluEWq7JOQBdwBCRBLQXERvCzVc0hfGkYcSBww0-3zwrqpCP4hFwzmch_wQ2Lg9XJ-Yeo-DU7nnsTGQiMQ_OQch5ZETMf7Za2pj6fg9pUKUD4t5IfqKNCg8W69k-qmZ8IFDNmzpmyz4lvQ963QScyUlKGMJE0NLI"/>
+</div>
+<span class="font-medium">Amit Shah</span>
+</div>
+</td>
+<td class="p-4 font-bold">07</td>
+<td class="p-4 text-outline font-body-sm">Yesterday (Electronic City)</td>
+<td class="p-4">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-bold text-[10px]">MEDIUM</span>
+</td>
+<td class="p-4 text-center">
+<button class="text-primary material-symbols-outlined hover:scale-110 transition-transform">visibility</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+<!-- Micro-interaction Scripts -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hover effect for bars
+            const bars = document.querySelectorAll('.chart-bar');
+            bars.forEach(bar => {
+                bar.addEventListener('mouseenter', () => {
+                    bar.style.opacity = '0.9';
+                });
+                bar.addEventListener('mouseleave', () => {
+                    bar.style.opacity = '1';
+                });
+            });
+
+            // Smooth entrance animation for rows
+            const rows = document.querySelectorAll('main > div');
+            rows.forEach((row, index) => {
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(20px)';
+                row.style.transition = 'all 0.5s ease-out';
+                row.style.transitionDelay = `${index * 0.1}s`;
+                setTimeout(() => {
+                    row.style.opacity = '1';
+                    row.style.transform = 'translateY(0)';
+                }, 50);
+            });
+        });
+    </script>
+<script>
+const API_BASE_TES = 'http://localhost:8000';
+
+function exportPagePDF(btn) {
+    var orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined" style="display:inline-block;animation:spin .8s linear infinite">sync</span> Generating...';
+    var style = document.createElement('style');
+    style.id = '__print_style_tes';
+    style.innerHTML = '@media print{header,aside,.fixed{display:none!important}main{margin:0!important;padding:16px!important}body{background:#fff!important}}';
+    document.head.appendChild(style);
+    setTimeout(function() {
+        window.print();
+        document.getElementById('__print_style_tes')?.remove();
+        btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Exported';
+        setTimeout(function(){ btn.innerHTML = orig; btn.disabled = false; }, 2000);
+    }, 400);
+}
+
+async function exportPageCSV(btn) {
+    var orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined" style="display:inline-block;animation:spin .8s linear infinite">sync</span> Fetching...';
+    try {
+        var res = await fetch(API_BASE_TES + '/violations?page=1&page_size=1000');
+        var data = await res.json();
+        var rows = data.results || [];
+        var headers = ['Case ID','Camera ID','Plate','Severity','Status','Challan','First Seen','Location'];
+        var lines = [headers.join(',')];
+        rows.forEach(function(r) {
+            lines.push([r.case_id,r.camera_id,r.plate||'',r.severity||'',r.status||'',r.challan_issued?'Yes':'No',r.first_seen||'',(r.location_name||'').replace(/,/g,' ')]
+                .map(function(c){ return '"'+(c+'').replace(/"/g,'""')+'"'; }).join(','));
+        });
+        var blob = new Blob([lines.join('\r\n')], {type:'text/csv;charset=utf-8;'});
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = 'TrafficGuard_Violations_' + new Date().toISOString().slice(0,10) + '.csv';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        btn.innerHTML = '<span class="material-symbols-outlined">download_done</span> ' + rows.length + ' rows';
+        setTimeout(function(){ btn.innerHTML = orig; btn.disabled = false; }, 2500);
+    } catch(err) {
+        btn.innerHTML = '<span class="material-symbols-outlined" style="color:#ba1a1a">error</span> Failed';
+        setTimeout(function(){ btn.innerHTML = orig; btn.disabled = false; }, 2500);
+    }
+}
+</script>
+</body></html>

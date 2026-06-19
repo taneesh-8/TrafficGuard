@@ -1,0 +1,233 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-overlay {
+            backdrop-filter: blur(8px);
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed-variant": "#004299",
+                        "primary-fixed-dim": "#afc6ff",
+                        "secondary-fixed": "#ffe16d",
+                        "on-tertiary-fixed": "#002105",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#fcd400",
+                        "outline": "#727786",
+                        "on-surface-variant": "#424754",
+                        "tertiary-fixed-dim": "#67df72",
+                        "background": "#fcf9f8",
+                        "on-secondary-fixed-variant": "#544600",
+                        "inverse-primary": "#afc6ff",
+                        "on-background": "#1b1c1c",
+                        "on-primary-fixed": "#001944",
+                        "tertiary-fixed": "#83fc8b",
+                        "surface-tint": "#0059c8",
+                        "secondary-fixed-dim": "#e9c400",
+                        "secondary": "#705d00",
+                        "on-tertiary-fixed-variant": "#005318",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-container": "#6e5c00",
+                        "primary-fixed": "#d9e2ff",
+                        "outline-variant": "#c2c6d6",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#fefcff",
+                        "inverse-surface": "#303030",
+                        "on-surface": "#1b1c1c",
+                        "error": "#ba1a1a",
+                        "primary-container": "#1f6feb",
+                        "inverse-on-surface": "#f3f0ef",
+                        "surface": "#fcf9f8",
+                        "surface-variant": "#e5e2e1",
+                        "surface-container-high": "#eae7e7",
+                        "surface-container": "#f0eded",
+                        "surface-dim": "#dcd9d9",
+                        "surface-container-low": "#f6f3f2",
+                        "surface-bright": "#fcf9f8",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#2874F0", /* Flipkart Blue Branding */
+                        "tertiary-container": "#00872d",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-secondary-fixed": "#221b00",
+                        "tertiary": "#006b22",
+                        "on-tertiary-container": "#f7fff1",
+                        "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-h2": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "plate-display": ["JetBrains Mono"],
+                        "headline-h1": ["Inter"],
+                        "headline-h3": ["Inter"],
+                        "label-caps": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface font-body-md text-on-surface overflow-hidden">
+<!-- Modal Backdrop -->
+<div class="fixed inset-0 z-[100] glass-overlay flex items-center justify-center p-4">
+<!-- Modal Container -->
+<section class="bg-surface-container-lowest w-full max-w-[760px] rounded-lg shadow-2xl overflow-hidden flex flex-col max-h-[921px]">
+<!-- Modal Header -->
+<header class="px-6 py-4 flex items-center justify-between bg-surface-container-low border-b-2 border-primary">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[24px]">shield</span>
+<h1 class="font-headline-h2 text-headline-h2 text-on-surface-variant uppercase tracking-tight" id="case-id-display">Case #TG-2024-004821</h1>
+<div class="flex items-center gap-2 ml-4">
+<span class="bg-error text-on-error font-label-caps text-label-caps px-2 py-0.5 rounded-sm uppercase">High Severity</span>
+<span class="bg-tertiary text-on-tertiary font-label-caps text-label-caps px-2 py-0.5 rounded-sm uppercase">Auto-Challan</span>
+</div>
+</div>
+<button class="p-2 hover:bg-surface-variant rounded-full transition-colors" onclick="this.closest('.fixed.inset-0').style.display='none'">
+<span class="material-symbols-outlined text-on-surface-variant">close</span>
+</button>
+</header>
+<!-- Modal Body -->
+<main class="flex-1 overflow-y-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Left Column: Image Evidence -->
+<div class="space-y-4">
+<div class="relative group border border-outline-variant rounded-sm overflow-hidden aspect-[4/3] bg-black">
+<img class="w-full h-full object-cover opacity-90" data-alt="A high-resolution urban traffic camera capture of a white SUV with license plate KA03MX4521. A bright red digital bounding box highlights the vehicle and the license plate. The image is overlaid with technical data such as speed indicators, timestamps, and camera ID 'CAM_047 SILK BOARD'. The lighting is bright daylight with high contrast, typical of professional traffic monitoring software." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-DFt301Rd7ThjV5GgzepO06cr9fQd3l_OEReWn3n2nc2WYPVLMgE2MDG80g6xFkZA_4YI_NPNFphJ8-J5-pLVpEkuF28O6Sm1bnyQgLB9oPPui7Ba4VCQVAi6dItCOgI-bJ5gsiD_MMEHL1LgAWemUvvAIatjgQp17G8wIJZzE-IUiIOFMlGwfwRez6YZTg8KHV91K0WqVPm6HEvOZGWvq1O2eyyRZjUahUxoz5uGjfdcxIKuUfaPIXdrU7SyEGPXYs5j13kJoKPn" id="evidence-image">
+<!-- AI Annotation Overlay -->
+<div class="absolute inset-0 pointer-events-none">
+<!-- Bounding Box Example -->
+<div class="absolute top-[40%] left-[30%] w-[40%] h-[30%] border-2 border-error">
+<div class="absolute -top-6 left-0 bg-error text-white text-[10px] px-2 py-0.5 font-bold">KA03MX4521 - 98% MATCH</div>
+</div>
+<!-- Cam Watermark -->
+<div class="absolute bottom-4 left-4 bg-black/60 text-white p-2 font-plate-display text-[12px] backdrop-blur-sm">
+<div class="">CAM_047 // SILK BOARD JUNCTION</div>
+<div class="">2024-05-24 14:32:01.042</div>
+<div class="">GPS: 12.9172° N, 77.6228° E</div>
+</div>
+</div>
+</div>
+<div class="flex gap-2">
+<div class="flex-1 p-2 bg-surface-container border border-outline-variant rounded-sm flex flex-col items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Vehicle Speed</span>
+<span class="font-headline-h2 text-headline-h2 text-error">78 KM/H</span>
+</div>
+<div class="flex-1 p-2 bg-surface-container border border-outline-variant rounded-sm flex flex-col items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Limit</span>
+<span class="font-headline-h2 text-headline-h2">40 KM/H</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Case Details -->
+<div class="space-y-5">
+<!-- Data List -->
+<div class="space-y-2">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant pb-1">Violation Intelligence</h3>
+<div class="grid grid-cols-2 gap-y-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Violation ID</span>
+<span class="font-body-sm text-body-sm font-semibold">V-882910</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">License Plate</span>
+<span class="font-plate-display text-plate-display text-primary">KA-03-MX-4521</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Violation Type</span>
+<span class="font-body-sm text-body-sm text-error font-bold uppercase">Dangerous Over-Speeding</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Confidence Score</span>
+<span class="font-body-sm text-body-sm text-tertiary font-bold">0.91 (High)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Camera System</span>
+<span class="font-body-sm text-body-sm">Cisco-TrafficGuard CAM_047</span>
+</div>
+</div>
+<!-- AI Summary Card -->
+<div class="p-4 bg-primary/5 border border-primary/20 rounded-lg">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<h4 class="font-headline-h3 text-headline-h3 text-primary">AI Analysis Summary</h4>
+</div>
+<p class="font-body-md text-body-md italic text-on-surface-variant leading-relaxed">
+                            "Vehicle detected traveling 38 km/h above the posted limit. Radar synchronization confirmed. Weather conditions: Clear. Visibility: High. Automatic identification of vehicle make (TATA Harrier) successful. No previous disputes for this camera sector."
+                        </p>
+</div>
+<!-- History & Action -->
+<div class="flex items-center justify-between p-3 bg-surface-container-low border border-outline-variant rounded-sm">
+<div>
+<span class="font-label-caps text-label-caps block text-on-surface-variant">Previous History</span>
+<span class="font-body-sm text-body-sm font-medium">3 Violations (Unpaid: ₹4,500)</span>
+</div>
+<!-- QR Placeholder -->
+<div class="w-12 h-12 bg-white border border-outline-variant p-1">
+<div class="w-full h-full bg-on-surface-variant opacity-20"></div>
+</div>
+</div>
+</div>
+</main>
+<!-- Modal Footer -->
+<footer class="px-6 py-4 bg-surface-container-high flex items-center justify-between">
+<div class="flex items-center gap-2 text-on-surface-variant opacity-60">
+<span class="material-symbols-outlined text-[16px]">info</span>
+<span class="font-body-sm text-body-sm">Data Source: BTP Central Server Cluster-04</span>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-[6px] border border-outline text-on-surface-variant font-headline-h3 text-headline-h3 rounded-sm hover:bg-surface-variant transition-all" onclick="console.log('Flagging case for review...')">
+                        Flag for Review
+                    </button>
+<button class="px-4 py-[6px] border border-primary text-primary font-headline-h3 text-headline-h3 rounded-sm hover:bg-primary/5 transition-all flex items-center gap-2" onclick="console.log('Generating PDF report...')">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        PDF
+                    </button>
+<button class="px-6 py-[6px] bg-tertiary text-on-tertiary font-headline-h3 text-headline-h3 rounded-sm hover:opacity-90 shadow-sm transition-all" onclick="const toast = document.createElement('div'); toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-tertiary text-on-tertiary px-6 py-3 rounded-lg shadow-2xl z-[200] flex items-center gap-2 animate-bounce'; toast.innerHTML = '&lt;span class=&quot;material-symbols-outlined&quot;&gt;check_circle&lt;/span&gt; Challan Issued Successfully'; document.body.appendChild(toast); setTimeout(() =&gt; toast.remove(), 3000);">
+                        Issue Challan
+                    </button>
+<button class="px-4 py-[6px] bg-on-surface text-on-primary font-headline-h3 text-headline-h3 rounded-sm hover:bg-on-surface-variant transition-all" onclick="this.closest('.fixed.inset-0').style.display='none'">
+                        Close
+                    </button>
+</div>
+</footer>
+</section>
+</div>
+<!-- Background Content Mock (Blurred) -->
+<div class="min-h-screen p-8 opacity-20 select-none pointer-events-none">
+<h1 class="text-4xl font-bold mb-8">TrafficGuard AI Dashboard</h1>
+<div class="grid grid-cols-3 gap-6">
+<div class="h-64 bg-surface-container-highest rounded-xl"></div>
+<div class="h-64 bg-surface-container-highest rounded-xl"></div>
+<div class="h-64 bg-surface-container-highest rounded-xl"></div>
+<div class="col-span-2 h-96 bg-surface-container-highest rounded-xl"></div>
+<div class="h-96 bg-surface-container-highest rounded-xl"></div>
+</div>
+</div>
+<script>
+        // Micro-interactions for modal elements
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.98)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = 'scale(1)';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+
+
+</body></html>

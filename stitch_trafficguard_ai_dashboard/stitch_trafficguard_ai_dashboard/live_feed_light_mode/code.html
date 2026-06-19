@@ -1,0 +1,1485 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+
+<meta charset="utf-8">
+
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+<!-- —€—€ Theme bootstrap: apply stored theme before paint (no flash) —€—€ -->
+
+<script>(function(){document.documentElement.className=localStorage.getItem('tg_theme')||'light';})();</script>
+
+<title>TrafficGuard AI - Live Feed</title>
+
+<!-- Tailwind CSS -->
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+<!-- Google Fonts: Inter & JetBrains Mono (for license plates) -->
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@700&amp;display=swap" rel="stylesheet">
+
+<!-- Material Symbols -->
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+
+<script src="../tg-theme.js" defer></script>
+
+<script id="tailwind-config">
+
+        tailwind.config = {
+
+            darkMode: "class",
+
+            theme: {
+
+                extend: {
+
+                    colors: {
+
+                        "surface-container-lowest": "#ffffff",
+
+                        "on-primary-fixed-variant": "#004299",
+
+                        "primary-fixed-dim": "#afc6ff",
+
+                        "secondary-fixed": "#ffe16d",
+
+                        "on-tertiary-fixed": "#002105",
+
+                        "on-error-container": "#93000a",
+
+                        "secondary-container": "#fcd400",
+
+                        "outline": "#727786",
+
+                        "on-surface-variant": "#424754",
+
+                        "tertiary-fixed-dim": "#67df72",
+
+                        "background": "#F1F3F6",
+
+                        "on-secondary-fixed-variant": "#544600",
+
+                        "inverse-primary": "#afc6ff",
+
+                        "on-background": "#1b1c1c",
+
+                        "on-primary-fixed": "#001944",
+
+                        "tertiary-fixed": "#83fc8b",
+
+                        "surface-tint": "#0059c8",
+
+                        "secondary-fixed-dim": "#e9c400",
+
+                        "secondary": "#705d00",
+
+                        "on-tertiary-fixed-variant": "#005318",
+
+                        "on-secondary": "#ffffff",
+
+                        "on-secondary-container": "#6e5c00",
+
+                        "primary-fixed": "#d9e2ff",
+
+                        "outline-variant": "#c2c6d6",
+
+                        "on-error": "#ffffff",
+
+                        "on-primary-container": "#fefcff",
+
+                        "inverse-surface": "#303030",
+
+                        "on-surface": "#1b1c1c",
+
+                        "error": "#ba1a1a",
+
+                        "primary-container": "#1f6feb",
+
+                        "inverse-on-surface": "#f3f0ef",
+
+                        "surface": "#fcf9f8",
+
+                        "surface-variant": "#e5e2e1",
+
+                        "surface-container-high": "#eae7e7",
+
+                        "surface-container": "#f0eded",
+
+                        "surface-dim": "#dcd9d9",
+
+                        "surface-container-low": "#f6f3f2",
+
+                        "surface-bright": "#fcf9f8",
+
+                        "error-container": "#ffdad6",
+
+                        "on-tertiary": "#ffffff",
+
+                        "primary": "#2874F0",
+
+                        "tertiary-container": "#00872d",
+
+                        "surface-container-highest": "#e5e2e1",
+
+                        "on-secondary-fixed": "#221b00",
+
+                        "tertiary": "#006b22",
+
+                        "on-tertiary-container": "#f7fff1",
+
+                        "on-primary": "#ffffff"
+
+                    },
+
+                    borderRadius: {
+
+                        "DEFAULT": "0.25rem",
+
+                        "lg": "0.5rem",
+
+                        "xl": "0.75rem",
+
+                        "full": "9999px"
+
+                    },
+
+                    spacing: {
+
+                        "container_max_width": "1440px",
+
+                        "accent_bar": "3px",
+
+                        "gutter": "16px",
+
+                        "margin_mobile": "16px",
+
+                        "header_height": "64px",
+
+                        "margin_desktop": "24px"
+
+                    },
+
+                    fontFamily: {
+
+                        "body-md": ["Inter"],
+
+                        "headline-h2": ["Inter"],
+
+                        "body-sm": ["Inter"],
+
+                        "plate-display": ["JetBrains Mono"],
+
+                        "headline-h1": ["Inter"],
+
+                        "headline-h3": ["Inter"],
+
+                        "label-caps": ["Inter"]
+
+                    },
+
+                    fontSize: {
+
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+
+                        "headline-h2": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+
+                        "plate-display": ["16px", {"lineHeight": "24px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+
+                        "headline-h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+
+                        "headline-h3": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}]
+
+                    }
+
+                },
+
+            },
+
+        }
+
+    </script>
+
+<style>
+
+        body { font-family: 'Inter', sans-serif; }
+
+        .material-symbols-outlined {
+
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+
+            vertical-align: middle;
+
+        }
+
+        .animate-pulse-green {
+
+            animation: pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+        }
+
+        @keyframes pulse-green {
+
+            0%, 100% { opacity: 1; transform: scale(1); }
+
+            50% { opacity: .5; transform: scale(1.2); }
+
+        }
+
+    </style>
+
+</head>
+
+<body class="bg-background text-on-surface">
+
+<!-- TOP NAV BAR (Shared Component Execution) -->
+
+<header class="fixed top-0 left-0 w-full z-50 bg-primary h-[64px] shadow-sm flex items-center px-6">
+
+<div class="flex items-center gap-3">
+
+<span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings: 'FILL' 1;">shield</span>
+
+<div>
+
+<h1 class="font-headline-h2 text-headline-h2 text-white leading-tight">TrafficGuard AI</h1>
+
+<p class="text-[10px] text-white/80 font-medium uppercase tracking-wider">Bengaluru Traffic Police</p>
+
+</div>
+
+</div>
+
+<!-- Navigation Links -->
+
+<nav class="flex h-full items-center ml-12 gap-8"><a class="text-white font-bold border-b-[3px] border-white h-full flex items-center pt-1 px-1" href="#" data-i18n="nav_live">Live Feed</a><a class="text-white/70 hover:text-white font-medium transition-colors" href="../map_view_light_mode/code.html" data-i18n="nav_map">Map</a><a class="text-white/70 hover:text-white font-medium transition-colors" href="../analytics_light_mode/code.html" data-i18n="nav_analytics">Analytics</a><a class="text-white/70 hover:text-white font-medium transition-colors" href="../dispatch_dark_mode/code.html" data-i18n="nav_dispatch">Dispatch</a><a class="text-white/70 hover:text-white font-medium transition-colors" href="../upload_analyze/code.html" data-i18n="nav_upload">Upload &amp; Analyze</a></nav>
+
+<!-- Trailing Actions -->
+
+<div class="ml-auto flex items-center gap-4">
+
+<!-- Language Pills -->
+
+<div class="flex bg-white/10 rounded-full p-0.5 border border-white/20" id="lang-pills">
+
+<button onclick="setLang('KN')" class="lang-pill px-3 py-1 text-[11px] font-bold text-white/50 hover:text-white transition-all rounded-full" data-lang="KN">ಕನ್ನಡ</button>
+
+<button onclick="setLang('EN')" class="lang-pill px-3 py-1 text-[11px] font-bold text-white bg-white/20 rounded-full" data-lang="EN">EN</button>
+
+<button onclick="setLang('HI')" class="lang-pill px-3 py-1 text-[11px] font-bold text-white/50 hover:text-white transition-all rounded-full" data-lang="HI">हिं</button>
+
+</div>
+
+<button data-theme-toggle class="p-2 text-white hover:bg-white/10 rounded-full transition-colors">
+
+<span class="material-symbols-outlined">dark_mode</span>
+
+</button>
+
+<button class="relative p-2 text-white hover:bg-white/10 rounded-full transition-colors">
+
+<span class="material-symbols-outlined">notifications</span>
+
+<span class="absolute top-1 right-1 w-4 h-4 bg-error text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-primary">3</span>
+
+</button>
+
+<div class="flex items-center gap-3 pl-2 border-l border-white/20">
+
+<div class="text-right hidden sm:block">
+
+<p class="text-[12px] font-bold text-white leading-none">Officer RP</p>
+
+<p class="text-[10px] text-white/70 leading-none mt-1">Unit-04 Silk Board</p>
+
+</div>
+
+<div class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-primary font-black shadow-inner overflow-hidden">
+
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a senior Indian police officer in a khaki uniform, with a focused yet composed expression. The lighting is crisp and cinematic, emphasizing the professional setting of a modern traffic command center with blurred digital displays in the background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwhgMmZLGb5QM9lbMe-1P-FIb0ZqBF2i5nogMf5qbyHaSKR_XL0lNNXluh_xRZ238RYJLoBv8TVIf6fQ2T6C9c-Khn87zylnC7xb1_xAgJz_A9OAScrXacm-l1PDXoiBQ7rv_sP-AB89nv5J-KiPfM7XFELV8xyozDYazaqD_7FC1ZliIegfaPsGTQiOSlsYd7T0c6xqu_YLolzzIErW1vPlroi4NLsMMANM0WFyqlGTxKx6nDv8DBI1fXovFwjUOfAQKGWz3i2-0R">
+
+</div>
+
+</div>
+
+</div>
+
+</header>
+
+<!-- Accent Bar -->
+
+<div class="fixed top-[64px] left-0 w-full h-[3px] bg-secondary-container z-40"></div>
+
+<!-- Main Content Area -->
+
+<main class="mt-[67px] p-6 max-w-container_max_width mx-auto">
+
+<div class="flex flex-col lg:flex-row gap-6">
+
+<!-- Left Panel: Camera Feed -->
+
+<div class="lg:w-[65%] flex flex-col gap-4">
+
+<section class="bg-surface-container-lowest rounded-lg border border-outline-variant shadow-sm overflow-hidden flex flex-col h-[500px]">
+
+<!-- Camera Header -->
+
+<div class="px-4 py-3 bg-surface-container-low border-b border-outline-variant flex items-center justify-between">
+
+<div class="flex items-center gap-3">
+
+<span class="w-2.5 h-2.5 rounded-full bg-error animate-pulse-green"></span>
+
+<h2 class="font-headline-h3 text-headline-h3 text-on-surface">CAM_047 — Silk Board Junction</h2>
+
+</div>
+
+<div class="flex items-center gap-2 px-2 py-1 bg-surface-container-highest rounded-md border border-outline-variant">
+
+<span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-tighter">Trust Score:</span>
+
+<span class="text-[12px] font-plate-display text-primary">0.94</span>
+
+</div>
+
+</div>
+
+<!-- Video Viewport -->
+
+<div id="feed-viewport" class="flex-1 bg-zinc-950 relative overflow-hidden">
+
+
+
+  <!-- —€—€ Real looping video background —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ -->
+
+  <video id="feed-video"
+
+         autoplay loop muted playsinline
+
+         class="absolute inset-0 w-full h-full object-cover"
+
+         style="z-index:1">
+
+    <source src="../assets/cam_047_feed.mp4" type="video/mp4">
+
+    <!-- Fallback dark background if video can't load -->
+
+  </video>
+
+
+
+  <!-- —€—€ Gradient overlay for text legibility (no heatmap/glow) —€—€—€—€—€—€
+
+       Top and bottom darken; centre stays transparent.
+
+       Per spec: ONLY for text legibility, no thermal/heatmap styling. -->
+
+  <div class="absolute inset-0 pointer-events-none" style="
+
+    z-index:2;
+
+    background: linear-gradient(
+
+      to bottom,
+
+      rgba(0,0,0,0.45) 0%,
+
+      rgba(0,0,0,0.10) 30%,
+
+      rgba(0,0,0,0.10) 70%,
+
+      rgba(0,0,0,0.45) 100%
+
+    );"></div>
+
+
+
+  <!-- —€—€ Bounding boxes for live violations from WS —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+
+       Boxes are rendered as absolutely-positioned divs on top of video.
+
+       KNOWN LIMITATION: backend returns bounding_hint as text (e.g.
+
+       "center, motorcycle rider"), not pixel coordinates. Positions are
+
+       approximated from the hint string — true IoU-based placement
+
+       requires pixel bounding boxes from the model. -->
+
+  <div id="bbox-layer" class="absolute inset-0 pointer-events-none" style="z-index:3"></div>
+
+
+
+  <!-- —€—€ Night mode tint (toggled by NIGHT MODE switch) —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ -->
+
+  <div id="night-overlay" class="absolute inset-0 pointer-events-none"
+
+       style="z-index:4; background:rgba(0,30,60,.5); opacity:0; transition:opacity .5s"></div>
+
+
+
+  <!-- —€—€ Overlay elements — LIVE badge + timestamp —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ -->
+
+  <div class="absolute inset-0 pointer-events-none p-4 flex flex-col justify-between" style="z-index:5">
+
+    <div class="flex justify-start">
+
+      <span class="bg-error text-white px-2 py-0.5 rounded text-[10px] font-black tracking-widest flex items-center gap-1 shadow-md">
+
+        <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> LIVE
+
+      </span>
+
+    </div>
+
+    <div class="flex justify-end">
+
+      <p id="feed-timestamp" class="bg-black/55 backdrop-blur-sm text-white/95 px-3 py-1 rounded font-plate-display text-[13px] border border-white/10">19-06-2026 20:46:53</p>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- —€—€ Zoom hint badge —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ -->
+
+  <div id="zoom-hint" class="hidden absolute top-3 right-3" style="z-index:6">
+
+    <span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">ZOOM 2×</span>
+
+  </div>
+
+
+
+</div>
+
+<!-- Control Bar -->
+
+<div class="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
+
+  <div class="flex items-center gap-6">
+
+
+
+    <!-- NIGHT MODE toggle -->
+
+    <label class="flex items-center gap-2 cursor-pointer group select-none" onclick="toggleSwitch(this,'nightmode')">
+
+      <div id="sw-nightmode" class="w-10 h-5 bg-outline-variant rounded-full relative transition-all duration-200">
+
+        <div class="sw-thumb absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-all duration-200"></div>
+
+      </div>
+
+      <span class="text-[12px] font-bold text-on-surface-variant group-hover:text-primary transition-colors">NIGHT MODE</span>
+
+    </label>
+
+
+
+    <!-- SOUND toggle -->
+
+    <label class="flex items-center gap-2 cursor-pointer group select-none" onclick="toggleSwitch(this,'sound')">
+
+      <div id="sw-sound" class="w-10 h-5 bg-primary rounded-full relative transition-all duration-200">
+
+        <div class="sw-thumb absolute right-1 top-1 w-3 h-3 bg-white rounded-full transition-all duration-200"></div>
+
+      </div>
+
+      <span class="text-[12px] font-bold text-on-surface-variant group-hover:text-primary transition-colors">SOUND</span>
+
+    </label>
+
+
+
+    <!-- BBOXES toggle — show/hide live violation bounding boxes -->
+
+    <label class="flex items-center gap-2 cursor-pointer group select-none" onclick="toggleSwitch(this,'bboxes')">
+
+      <div id="sw-bboxes" class="w-10 h-5 bg-primary rounded-full relative transition-all duration-200">
+
+        <div class="sw-thumb absolute right-1 top-1 w-3 h-3 bg-white rounded-full transition-all duration-200"></div>
+
+      </div>
+
+      <span class="text-[12px] font-bold text-on-surface-variant group-hover:text-primary transition-colors">DETECTIONS</span>
+
+    </label>
+
+
+
+  </div>
+
+  <div class="flex gap-2">
+
+    <button id="btn-screenshot" onclick="captureScreenshot()"
+
+            class="p-2 bg-surface-container-highest border border-outline-variant rounded-md hover:bg-primary hover:text-white hover:border-primary transition-colors"
+
+            title="Capture Screenshot">
+
+      <span class="material-symbols-outlined text-[18px]">screenshot</span>
+
+    </button>
+
+    <button id="btn-zoom" onclick="toggleZoom(this)"
+
+            class="p-2 bg-surface-container-highest border border-outline-variant rounded-md hover:bg-primary hover:text-white hover:border-primary transition-colors"
+
+            title="Zoom In">
+
+      <span class="material-symbols-outlined text-[18px]">zoom_in</span>
+
+    </button>
+
+  </div>
+
+</div>
+
+</section>
+
+</div>
+
+<!-- Right Panel: Live Violations -->
+
+<div class="lg:w-[35%] flex flex-col gap-4">
+
+<header class="flex items-center justify-between mb-1 px-1">
+
+<h2 class="font-headline-h3 text-headline-h3 text-on-surface-variant flex items-center gap-2">
+
+                        Live Violations
+
+                        <span class="px-2 py-0.5 bg-primary-container text-white text-[10px] rounded-full font-bold">247 TODAY</span>
+
+</h2>
+
+<button class="text-primary text-[12px] font-bold hover:underline">View All</button>
+
+</header>
+
+<div class="flex flex-col gap-3 overflow-y-auto max-h-[460px] pr-1">
+
+<!-- Violation Card 1 (HIGH) -->
+
+<div class="bg-surface-container-lowest border-l-4 border-l-error border border-outline-variant rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+
+<div class="flex justify-between items-start mb-3">
+
+<div class="bg-surface-container border border-outline-variant px-3 py-1 rounded shadow-sm">
+
+<span class="font-plate-display text-[15px] tracking-widest text-on-surface">KA03MX4521</span>
+
+</div>
+
+<div class="flex flex-col items-end">
+
+<span class="px-2 py-0.5 bg-error text-white text-[10px] font-bold rounded mb-1">HIGH SEVERITY</span>
+
+<span class="text-[10px] font-bold text-on-surface-variant">Conf: 0.91</span>
+
+</div>
+
+</div>
+
+<h3 class="text-body-md font-bold text-on-surface mb-1">Helmet Violation</h3>
+
+<p class="text-body-sm text-on-surface-variant mb-4">Motorcycle without helmet detected at Grid A-4.</p>
+
+<div class="grid grid-cols-2 gap-2">
+
+<button class="py-2 bg-surface-container-low border border-outline-variant text-[12px] font-bold rounded-md hover:bg-surface-variant transition-colors flex items-center justify-center gap-2">
+
+<span class="material-symbols-outlined text-[16px]">visibility</span> Evidence
+
+                            </button>
+
+<button class="py-2 bg-primary text-white text-[12px] font-bold rounded-md hover:bg-primary-container transition-all flex items-center justify-center gap-2 shadow-sm">
+
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">description</span> Challan
+
+                            </button>
+
+</div>
+
+</div>
+
+<!-- Violation Card 2 (MEDIUM) -->
+
+<div class="bg-surface-container-lowest border-l-4 border-l-secondary-fixed-dim border border-outline-variant rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+
+<div class="flex justify-between items-start mb-3">
+
+<div class="bg-surface-container border border-outline-variant px-3 py-1 rounded shadow-sm">
+
+<span class="font-plate-display text-[15px] tracking-widest text-on-surface">MH04AB1234</span>
+
+</div>
+
+<div class="flex flex-col items-end">
+
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded mb-1">MEDIUM</span>
+
+<span class="text-[10px] font-bold text-on-surface-variant">Conf: 0.88</span>
+
+</div>
+
+</div>
+
+<h3 class="text-body-md font-bold text-on-surface mb-1">Triple Riding</h3>
+
+<p class="text-body-sm text-on-surface-variant mb-4">Excessive passenger load detected on two-wheeler.</p>
+
+<div class="grid grid-cols-2 gap-2">
+
+<button class="py-2 bg-surface-container-low border border-outline-variant text-[12px] font-bold rounded-md hover:bg-surface-variant transition-colors">Evidence</button>
+
+<button class="py-2 bg-primary text-white text-[12px] font-bold rounded-md hover:bg-primary-container transition-all">Challan</button>
+
+</div>
+
+</div>
+
+<!-- Violation Card 3 (REPEAT OFFENDER) -->
+
+<div class="bg-error-container/40 border-l-4 border-l-error border border-error/20 rounded-lg p-4 shadow-sm relative overflow-hidden">
+
+<div class="absolute -right-6 -top-6 rotate-12 opacity-5 pointer-events-none">
+
+<span class="material-symbols-outlined text-8xl" style="font-variation-settings: 'FILL' 1;">warning</span>
+
+</div>
+
+<div class="flex justify-between items-start mb-3">
+
+<div class="bg-white/80 border border-error/30 px-3 py-1 rounded shadow-sm">
+
+<span class="font-plate-display text-[15px] tracking-widest text-on-error-container">DL01AB9999</span>
+
+</div>
+
+<span class="px-2 py-0.5 bg-error text-white text-[10px] font-black rounded italic">REPEAT OFFENDER</span>
+
+</div>
+
+<h3 class="text-body-md font-black text-on-error-container mb-1">Red Light Jumping</h3>
+
+<p class="text-body-sm font-bold text-error mb-4">Alert: 4th offense this week. Escalated to Dispatch.</p>
+
+<div class="grid grid-cols-2 gap-2">
+
+<button class="py-2 bg-white/60 border border-error/20 text-[12px] font-bold rounded-md text-error hover:bg-white transition-colors">Review</button>
+
+<button class="py-2 bg-error text-white text-[12px] font-bold rounded-md hover:bg-error/90 transition-all shadow-md">Flag Unit</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Bottom Stats Strip -->
+
+<section class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+<div class="bg-white rounded-lg p-5 border border-outline-variant shadow-sm flex items-center gap-5 hover:-translate-y-1 transition-transform">
+
+<div class="w-12 h-12 bg-primary-fixed rounded-lg flex items-center justify-center text-primary">
+
+<span class="material-symbols-outlined text-3xl">analytics</span>
+
+</div>
+
+<div>
+
+<p class="text-headline-h1 font-black text-on-surface leading-none">247</p>
+
+<p class="text-label-caps text-on-surface-variant mt-1 uppercase">Today's Violations</p>
+
+</div>
+
+</div>
+
+<div class="bg-white rounded-lg p-5 border border-outline-variant shadow-sm flex items-center gap-5 hover:-translate-y-1 transition-transform">
+
+<div class="w-12 h-12 bg-secondary-fixed rounded-lg flex items-center justify-center text-on-secondary-fixed">
+
+<span class="material-symbols-outlined text-3xl">videocam</span>
+
+</div>
+
+<div>
+
+<p class="text-headline-h1 font-black text-on-surface leading-none">18</p>
+
+<p class="text-label-caps text-on-surface-variant mt-1 uppercase">Active Cameras</p>
+
+</div>
+
+</div>
+
+<div class="bg-white rounded-lg p-5 border border-outline-variant shadow-sm flex items-center gap-5 hover:-translate-y-1 transition-transform">
+
+<div class="w-12 h-12 bg-tertiary-fixed rounded-lg flex items-center justify-center text-on-tertiary-fixed">
+
+<span class="material-symbols-outlined text-3xl">task_alt</span>
+
+</div>
+
+<div>
+
+<p class="text-headline-h1 font-black text-on-surface leading-none">31</p>
+
+<p class="text-label-caps text-on-surface-variant mt-1 uppercase">Challans Issued</p>
+
+</div>
+
+</div>
+
+<div class="bg-white rounded-lg p-5 border border-outline-variant shadow-sm flex items-center gap-5 hover:-translate-y-1 transition-transform">
+
+<div class="w-12 h-12 bg-error-container rounded-lg flex items-center justify-center text-on-error-container">
+
+<span class="material-symbols-outlined text-3xl">warning</span>
+
+</div>
+
+<div>
+
+<p class="text-headline-h1 font-black text-on-surface leading-none">4</p>
+
+<p class="text-label-caps text-on-surface-variant mt-1 uppercase">Reoffenders Flagged</p>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+<!-- Side Navigation Sidebar (Suppressed for Main Dashboard Canvas but shown in smaller scale as per SideNavBar rules for relevance check) -->
+
+<!-- Not visible in the primary layout but implied in system logic for top-level -->
+
+<script>
+
+
+
+
+
+<script>
+
+// —€—€ Evidence Modal —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+
+function showEvidenceModal(data) {
+
+    // Remove existing modal if present
+
+    const existing = document.getElementById('evidence-modal-root');
+
+    if (existing) existing.remove();
+
+
+
+    const overlay = document.createElement('div');
+
+    overlay.id = 'evidence-modal-root';
+
+    overlay.className = 'fixed inset-0 z-[100] flex items-center justify-center p-4';
+
+    overlay.style.backdropFilter = 'blur(4px)';
+
+    overlay.style.backgroundColor = 'rgba(0,0,0,0.65)';
+
+    overlay.innerHTML = `
+
+      <section class="bg-white w-full max-w-[680px] rounded-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" onclick="event.stopPropagation()">
+
+        <header class="px-6 py-4 flex items-center justify-between bg-surface-container-low border-b-2 border-primary" style="border-bottom-color:#2874F0">
+
+          <div class="flex items-center gap-3">
+
+            <span class="material-symbols-outlined" style="color:#2874F0">shield</span>
+
+            <h2 style="font-size:15px;font-weight:700;color:#424754;text-transform:uppercase;letter-spacing:.05em">Evidence — ${data.plate || '—'}</h2>
+
+            <span style="font-size:10px;font-weight:700;background:#ba1a1a;color:#fff;padding:2px 8px;border-radius:2px;text-transform:uppercase;margin-left:8px">${data.severity || 'HIGH'}</span>
+
+          </div>
+
+          <button onclick="document.getElementById('evidence-modal-root').remove()" style="padding:6px;border-radius:50%;cursor:pointer;border:none;background:transparent">
+
+            <span class="material-symbols-outlined" style="color:#424754">close</span>
+
+          </button>
+
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-6 grid gap-5" style="grid-template-columns:1fr 1fr">
+
+          <div>
+
+            <div style="aspect-ratio:4/3;background:#0d1117;border-radius:4px;overflow:hidden;border:1px solid #c2c6d6;display:flex;align-items:center;justify-content:center">
+
+              <span class="material-symbols-outlined" style="font-size:48px;color:#424754">camera_alt</span>
+
+            </div>
+
+            <p style="margin-top:8px;font-size:11px;color:#727786;text-align:center">Camera frame — annotated image available after /analyze</p>
+
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:14px">
+
+            <div>
+
+              <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#727786;margin-bottom:4px">License Plate</p>
+
+              <p style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;letter-spacing:.1em;color:#2874F0">${data.plate || '—'}</p>
+
+            </div>
+
+            <div>
+
+              <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#727786;margin-bottom:4px">Violation</p>
+
+              <p style="font-size:14px;font-weight:600;color:#1b1c1c">${data.type || '—'}</p>
+
+            </div>
+
+            <div>
+
+              <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#727786;margin-bottom:4px">Confidence</p>
+
+              <p style="font-size:14px;font-weight:600;color:#006b22">${data.conf || '—'}</p>
+
+            </div>
+
+            <div style="padding:12px;background:#eef3fe;border-radius:6px;border:1px solid rgba(40,116,240,0.15)">
+
+              <p style="font-size:11px;font-style:italic;color:#424754">Submit the actual image via Upload &amp; Analyze to generate a court-ready PDF report with full AI analysis.</p>
+
+            </div>
+
+          </div>
+
+        </main>
+
+        <footer style="padding:14px 24px;background:#f6f3f2;border-top:1px solid #c2c6d6;display:flex;justify-content:flex-end;gap:10px">
+
+          <button onclick="window.location.href='../upload_analyze/code.html'" style="padding:7px 18px;border:1px solid #2874F0;color:#2874F0;background:transparent;font-weight:700;font-size:13px;border-radius:4px;cursor:pointer">
+
+            Upload &amp; Analyze
+
+          </button>
+
+          <button onclick="document.getElementById('evidence-modal-root').remove()" style="padding:7px 18px;background:#1b1c1c;color:#fff;font-weight:700;font-size:13px;border-radius:4px;cursor:pointer;border:none">
+
+            Close
+
+          </button>
+
+        </footer>
+
+      </section>`;
+
+
+
+    // Close on backdrop click
+
+    overlay.addEventListener('click', () => overlay.remove());
+
+    document.body.appendChild(overlay);
+
+}
+
+
+
+// —€—€ Evidence / Review / Challan button delegation —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+
+document.addEventListener('click', function(e) {
+    var btn = e.target.closest('button');
+    if (!btn) return;
+    var label = (btn.textContent || btn.innerText || '').replace(/\s+/g,' ').trim();
+
+    if (label.includes('Evidence') || label.includes('Review')) {
+        var card = btn.closest('.border-l-4, [class*="border-l-4"]') ||
+                   btn.closest('[class*="border-l-error"]') ||
+                   btn.closest('[class*="border-error"]');
+        if (!card) { card = btn.closest('div.rounded-lg'); }
+        if (!card) return;
+        var plateEl = card.querySelector('[class*="font-plate-display"], .font-plate-display');
+        var titleEl = card.querySelector('h3');
+        var confEl  = card.querySelector('[class*="text-on-surface-variant"]');
+        showEvidenceModal({
+            plate:    plateEl ? plateEl.textContent.trim() : '',
+            type:     titleEl ? titleEl.textContent.trim() : '',
+            conf:     confEl  ? confEl.textContent.trim()  : '',
+            severity: (card.className || '').includes('error') ? 'HIGH' : 'MEDIUM',
+        });
+        return;
+    }
+
+    if (label.includes('Challan')) {
+        var toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#006b22;color:#fff;padding:12px 24px;border-radius:8px;font-weight:700;z-index:9999;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,.2)';
+        toast.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Challan queued — submit via Upload &amp; Analyze to issue automatically';
+        document.body.appendChild(toast);
+        setTimeout(function(){ toast.remove(); }, 3500);
+        return;
+    }
+
+    if (label.includes('Flag Unit')) {
+        var toast2 = document.createElement('div');
+        toast2.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#ba1a1a;color:#fff;padding:12px 24px;border-radius:8px;font-weight:700;z-index:9999;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,.2)';
+        toast2.innerHTML = '<span class="material-symbols-outlined">warning</span> Unit flagged for immediate dispatch';
+        document.body.appendChild(toast2);
+        setTimeout(function(){ toast2.remove(); }, 3000);
+    }
+});
+
+    }
+
+
+
+    if (text.includes('Challan')) {
+
+        const toast = document.createElement('div');
+
+        toast.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#006b22;color:#fff;padding:12px 24px;border-radius:8px;font-weight:700;z-index:9999;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2)';
+
+        toast.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Challan queued — submit via Upload &amp; Analyze to issue automatically';
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => toast.remove(), 3500);
+
+    }
+
+
+
+    if (text.includes('Flag Unit')) {
+
+        const toast = document.createElement('div');
+
+        toast.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#ba1a1a;color:#fff;padding:12px 24px;border-radius:8px;font-weight:700;z-index:9999;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2)';
+
+        toast.innerHTML = '<span class="material-symbols-outlined">warning</span> Unit flagged for immediate dispatch';
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => toast.remove(), 3000);
+
+    }
+
+});
+
+
+
+// —€—€ Theme toggle now handled by tg-theme.js (data-theme-toggle attribute) —€—€
+
+</script>
+
+<script>
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+// LIVE FEED — VIDEO + BOUNDING BOX + WS ENGINE
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+const WS_URL  = 'ws://localhost:8000/ws/violations';
+
+// How long (ms) a bounding box stays visible after detection
+
+const BBOX_TTL = 4500;
+
+
+
+// —€—€ Toggle switch state —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+
+const swState = { nightmode: false, sound: true, bboxes: true };
+
+
+
+window.toggleSwitch = function (label, key) {
+
+  const track = label.querySelector('[id^="sw-"]');
+
+  const thumb = label.querySelector('.sw-thumb');
+
+  if (!track) return;
+
+
+
+  const isOn = !track.classList.contains('sw-off');
+
+  track.classList.toggle('sw-off', isOn);
+
+  track.style.background = isOn ? '#c2c6d6' : '#2874F0';
+
+  thumb.style.cssText    = isOn
+
+    ? 'position:absolute;left:4px;top:4px;width:12px;height:12px;background:#fff;border-radius:50%;transition:all .2s'
+
+    : 'position:absolute;right:4px;top:4px;width:12px;height:12px;background:#fff;border-radius:50%;transition:all .2s';
+
+
+
+  swState[key] = !isOn;
+
+
+
+  if (key === 'nightmode') {
+
+    document.getElementById('night-overlay').style.opacity = swState.nightmode ? '1' : '0';
+
+  }
+
+  if (key === 'sound') {
+
+    showToast(swState.sound ? 'ðŸ”Š Sound alerts on' : 'ðŸ”‡ Sound alerts off');
+
+  }
+
+  if (key === 'bboxes') {
+
+    document.getElementById('bbox-layer').style.opacity = swState.bboxes ? '1' : '0';
+
+  }
+
+};
+
+
+
+// —€—€ Timestamp clock —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+
+function tickClock() {
+
+  const el = document.getElementById('feed-timestamp');
+
+  if (!el) return;
+
+  const now = new Date();
+
+  const p = n => String(n).padStart(2,'0');
+
+  el.textContent = `${p(now.getDate())}-${p(now.getMonth()+1)}-${now.getFullYear()} ${p(now.getHours())}:${p(now.getMinutes())}:${p(now.getSeconds())}`;
+
+}
+
+setInterval(tickClock, 1000);
+
+tickClock();
+
+
+
+// —€—€ Screenshot (captures video frame) —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+
+window.captureScreenshot = function () {
+
+  const video = document.getElementById('feed-video');
+
+  if (!video) return;
+
+  const c = document.createElement('canvas');
+
+  c.width = video.videoWidth || 1280;
+
+  c.height = video.videoHeight || 720;
+
+  c.getContext('2d').drawImage(video, 0, 0);
+
+  const link = document.createElement('a');
+
+  link.download = `TG_CAM047_${Date.now()}.png`;
+
+  link.href = c.toDataURL('image/png');
+
+  link.click();
+
+  const btn = document.getElementById('btn-screenshot');
+
+  const orig = btn.innerHTML;
+
+  btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check_circle</span>';
+
+  setTimeout(() => { btn.innerHTML = orig; }, 2000);
+
+};
+
+
+
+// —€—€ Zoom —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+
+let _zoomed = false;
+
+window.toggleZoom = function (btn) {
+
+  _zoomed = !_zoomed;
+
+  const vp = document.getElementById('feed-viewport');
+
+  // Scale the video + overlay layers together
+
+  ['feed-video','bbox-layer','night-overlay'].forEach(id => {
+
+    const el = document.getElementById(id);
+
+    if (el) {
+
+      el.style.transform  = _zoomed ? 'scale(1.8) translate(5%, 5%)' : 'scale(1)';
+
+      el.style.transition = 'transform .3s ease';
+
+    }
+
+  });
+
+  btn.querySelector('.material-symbols-outlined').textContent = _zoomed ? 'zoom_out' : 'zoom_in';
+
+  document.getElementById('zoom-hint').classList.toggle('hidden', !_zoomed);
+
+};
+
+
+
+// —€—€ Toast helper —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+
+window.showToast = function (msg, color) {
+
+  const t = document.createElement('div');
+
+  t.style.cssText = `position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:${color||'#1b1c1c'};color:#fff;padding:10px 20px;border-radius:8px;font-weight:700;font-size:13px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.25)`;
+
+  t.textContent = msg;
+
+  document.body.appendChild(t);
+
+  setTimeout(() => t.remove(), 2200);
+
+};
+
+
+
+// —€—€ Bounding box hint â†’ CSS position —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+
+// KNOWN LIMITATION: backend returns bounding_hint as natural language
+
+// (e.g. "center, motorcycle rider"), not pixel coordinates. The mapping
+
+// below approximates position from keywords. True pixel-accurate boxes
+
+// require the model to return [x,y,w,h] or normalised coordinates.
+
+function hintToCSS(hint) {
+
+  const h = (hint || '').toLowerCase();
+
+  let top  = 35, left = 35, width = 28, height = 30;
+
+
+
+  if      (h.includes('top'))        top  = 10;
+
+  else if (h.includes('bottom'))     top  = 58;
+
+  else if (h.includes('center') || h.includes('middle')) top = 32;
+
+
+
+  if      (h.includes('left'))       left = 8;
+
+  else if (h.includes('right'))      left = 62;
+
+  else if (h.includes('center'))     left = 35;
+
+
+
+  if (h.includes('background') || h.includes('far'))  { width = 14; height = 16; top += 5; }
+
+  if (h.includes('foreground') || h.includes('close'))  { width = 36; height = 38; }
+
+
+
+  return { top: `${top}%`, left: `${left}%`, width: `${width}%`, height: `${height}%` };
+
+}
+
+
+
+// —€—€ Render one bounding box —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+
+function renderBbox(caseData) {
+
+  if (!swState.bboxes) return;
+
+  const violations = caseData.violations || [];
+
+  if (!violations.length) return;   // no violation â†’ no box (per spec)
+
+
+
+  const layer = document.getElementById('bbox-layer');
+
+  const plate = caseData.plate || '';
+
+
+
+  violations.forEach(v => {
+
+    const sev = (v.severity || 'MEDIUM').toUpperCase();
+
+    const borderColor = sev === 'HIGH' ? '#ba1a1a' : sev === 'MEDIUM' ? '#e65100' : '#e09900';
+
+    const pos = hintToCSS(v.bounding_hint || '');
+
+
+
+    const box = document.createElement('div');
+
+    box.style.cssText = `
+
+      position:absolute;
+
+      top:${pos.top}; left:${pos.left};
+
+      width:${pos.width}; height:${pos.height};
+
+      border:2px solid ${borderColor};
+
+      box-sizing:border-box;
+
+      pointer-events:none;
+
+      animation:bbox-appear .2s ease;
+
+    `;
+
+
+
+    // Label tag at top-left of box
+
+    const label = document.createElement('div');
+
+    label.style.cssText = `
+
+      position:absolute; top:-20px; left:0;
+
+      background:${borderColor}; color:#fff;
+
+      font-size:10px; font-weight:700;
+
+      padding:1px 6px; white-space:nowrap;
+
+      border-radius:2px 2px 0 0;
+
+      display:flex; align-items:center; gap:4px;
+
+      font-family:Inter,sans-serif;
+
+    `;
+
+    const plateSpan = plate
+
+      ? `<span style="font-family:'JetBrains Mono',monospace;letter-spacing:.05em">${plate}</span> Â· `
+
+      : '';
+
+    label.innerHTML = `${plateSpan}${(v.type||'').replace(/_/g,' ').toUpperCase()}`;
+
+    box.appendChild(label);
+
+    layer.appendChild(box);
+
+
+
+    // Remove after TTL
+
+    setTimeout(() => box.remove(), BBOX_TTL);
+
+  });
+
+}
+
+
+
+// Add bbox keyframe animation to page
+
+const styleEl = document.createElement('style');
+
+styleEl.textContent = `
+
+  @keyframes bbox-appear {
+
+    from { opacity:0; transform:scale(.95); }
+
+    to   { opacity:1; transform:scale(1); }
+
+  }
+
+`;
+
+document.head.appendChild(styleEl);
+
+
+
+// —€—€ WebSocket — live violation feed —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+
+(function connectWS() {
+
+  let ws, retryDelay = 3000;
+
+
+
+  function connect() {
+
+    try {
+
+      ws = new WebSocket(WS_URL);
+
+
+
+      ws.onopen = () => {
+
+        retryDelay = 3000;
+
+        console.log('[WS] Connected to /ws/violations');
+
+      };
+
+
+
+      ws.onmessage = (e) => {
+
+        try {
+
+          const data = JSON.parse(e.data);
+
+          if (data.status !== 'no_violation') {
+
+            renderBbox(data);
+
+
+
+            // Pulse the LIVE badge
+
+            const badge = document.querySelector('.bg-error.text-white.px-2');
+
+            if (badge) {
+
+              badge.style.transform = 'scale(1.15)';
+
+              setTimeout(() => { badge.style.transform = ''; }, 300);
+
+            }
+
+
+
+            // Sound alert (if enabled)
+
+            if (swState.sound) {
+
+              try {
+
+                const ctx = new AudioContext();
+
+                const osc = ctx.createOscillator();
+
+                const gain = ctx.createGain();
+
+                osc.connect(gain); gain.connect(ctx.destination);
+
+                osc.frequency.value = 880;
+
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+
+                osc.start(); osc.stop(ctx.currentTime + 0.3);
+
+              } catch (_) {}
+
+            }
+
+          }
+
+        } catch (err) { console.warn('[WS] parse error', err); }
+
+      };
+
+
+
+      ws.onerror = () => {};
+
+      ws.onclose = () => {
+
+        console.log(`[WS] Disconnected — retry in ${retryDelay}ms`);
+
+        setTimeout(connect, retryDelay);
+
+        retryDelay = Math.min(retryDelay * 1.5, 30000);
+
+      };
+
+    } catch (e) {
+
+      setTimeout(connect, retryDelay);
+
+    }
+
+  }
+
+  connect();
+
+})();
+
+</script>
+
+<script>
+
+// —€—€—€ Shared i18n for Live Feed —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+
+const TG_TRANSLATIONS = {
+  EN: { nav_live:"Live Feed", nav_map:"Map", nav_analytics:"Analytics", nav_dispatch:"Dispatch", nav_upload:"Upload & Analyze", brand_sub:"Bengaluru Traffic Police" },
+  KN: { nav_live:"ನೇರ ಪ್ರಸಾರ", nav_map:"ನಕ್ಷೆ", nav_analytics:"ವಿಶ್ಲೇಷಣೆ", nav_dispatch:"ರವಾನೆ", nav_upload:"ಅಪ್‌ಲೋಡ್ ಮತ್ತು ವಿಶ್ಲೇಷಿಸಿ", brand_sub:"ಬೆಂಗಳೂರು ಸಂಚಾರ ಪೊಲೀಸ್" },
+  HI: { nav_live:"लाइव फ़ीड", nav_map:"मानचित्र", nav_analytics:"विश्लेषण", nav_dispatch:"डिस्पैच", nav_upload:"अपलोड और विश्लेषण करें", brand_sub:"बेंगलुरु यातायात पुलिस" }
+};
+
+function setLang(lang) {
+
+  localStorage.setItem('tg_lang', lang);
+
+  const t = TG_TRANSLATIONS[lang] || TG_TRANSLATIONS.EN;
+
+  document.querySelectorAll('[data-i18n]').forEach(el => { if(t[el.dataset.i18n]) el.textContent = t[el.dataset.i18n]; });
+
+  document.querySelectorAll('.lang-pill').forEach(p => {
+
+    const active = p.dataset.lang === lang;
+
+    p.className = 'lang-pill px-3 py-1 text-[11px] font-bold transition-all rounded-full ' + (active ? 'text-white bg-white/20' : 'text-white/50 hover:text-white');
+
+  });
+
+}
+
+(function(){ setLang(localStorage.getItem('tg_lang') || 'EN'); })();
+
+</script>
+
+</body></html>
+

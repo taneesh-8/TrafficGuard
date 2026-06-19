@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>TrafficGuard AI - Upload &amp; Analyze</title>
+<!-- ── Theme bootstrap ── -->
+<script>(function(){document.documentElement.className=localStorage.getItem('tg_theme')||'light';})();</script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="../tg-theme.js" defer></script>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "surface-container-lowest": "#ffffff",
+        "on-primary-fixed-variant": "#004299",
+        "primary-fixed-dim": "#afc6ff",
+        "secondary-fixed": "#ffe16d",
+        "on-tertiary-fixed": "#002105",
+        "on-error-container": "#93000a",
+        "secondary-container": "#fcd400",
+        "outline": "#727786",
+        "on-surface-variant": "#424754",
+        "tertiary-fixed-dim": "#67df72",
+        "background": "#F1F3F6",
+        "on-secondary-fixed-variant": "#544600",
+        "inverse-primary": "#afc6ff",
+        "on-background": "#1b1c1c",
+        "on-primary-fixed": "#001944",
+        "tertiary-fixed": "#83fc8b",
+        "surface-tint": "#0059c8",
+        "secondary-fixed-dim": "#e9c400",
+        "secondary": "#705d00",
+        "on-tertiary-fixed-variant": "#005318",
+        "on-secondary": "#ffffff",
+        "on-secondary-container": "#6e5c00",
+        "primary-fixed": "#d9e2ff",
+        "outline-variant": "#c2c6d6",
+        "on-error": "#ffffff",
+        "on-primary-container": "#fefcff",
+        "inverse-surface": "#303030",
+        "on-surface": "#1b1c1c",
+        "error": "#ba1a1a",
+        "primary-container": "#1f6feb",
+        "inverse-on-surface": "#f3f0ef",
+        "surface": "#fcf9f8",
+        "surface-variant": "#e5e2e1",
+        "surface-container-high": "#eae7e7",
+        "surface-container": "#f0eded",
+        "surface-dim": "#dcd9d9",
+        "surface-container-low": "#f6f3f2",
+        "surface-bright": "#fcf9f8",
+        "error-container": "#ffdad6",
+        "on-tertiary": "#ffffff",
+        "primary": "#2874F0",
+        "tertiary-container": "#00872d",
+        "surface-container-highest": "#e5e2e1",
+        "on-secondary-fixed": "#221b00",
+        "tertiary": "#006b22",
+        "on-tertiary-container": "#f7fff1",
+        "on-primary": "#ffffff"
+      },
+      borderRadius: {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
+      spacing: {
+        "container_max_width": "1440px",
+        "accent_bar": "3px",
+        "gutter": "16px",
+        "margin_mobile": "16px",
+        "header_height": "64px",
+        "margin_desktop": "24px"
+      },
+      fontFamily: {
+        "body-md": ["Inter"],
+        "headline-h2": ["Inter"],
+        "body-sm": ["Inter"],
+        "plate-display": ["JetBrains Mono"],
+        "headline-h1": ["Inter"],
+        "headline-h3": ["Inter"],
+        "label-caps": ["Inter"]
+      },
+      fontSize: {
+        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+        "headline-h2": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+        "plate-display": ["16px", {"lineHeight": "24px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+        "headline-h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+        "headline-h3": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}]
+      }
+    }
+  }
+}
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+  }
+  .card-shadow { box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+  .accent-border { border-bottom: 3px solid #2874F0; }
+  .glass-header { backdrop-filter: blur(8px); background: rgba(40,116,240,1); }
+  .dropzone-ring { border: 2px dashed #c2c6d6; transition: border-color 0.2s, background 0.2s; }
+  .dropzone-ring.drag-over { border-color: #2874F0; background: #eef3fe; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { animation: spin 0.8s linear infinite; display: inline-block; }
+  .severity-high  { background: #ba1a1a; color: #fff; }
+  .severity-medium{ background: #e65100; color: #fff; }
+  .severity-low   { background: #fcd400; color: #221b00; }
+</style>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+
+<!-- ═══════════════════════════════════════════
+     TOP NAVIGATION BAR (matches live_feed pattern)
+     ═══════════════════════════════════════════ -->
+<header class="fixed top-0 left-0 w-full z-50 glass-header accent-border h-[64px] flex items-center px-6 shadow-sm">
+  <div class="flex items-center gap-3">
+    <span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings:'FILL' 1;">shield</span>
+    <div>
+      <h1 class="font-headline-h2 text-headline-h2 text-white leading-tight" data-i18n="brand">TrafficGuard AI</h1>
+      <p class="text-[10px] text-white/80 font-medium uppercase tracking-wider" data-i18n="brand_sub">Bengaluru Traffic Police</p>
+    </div>
+  </div>
+
+  <!-- Nav Links -->
+  <nav class="flex h-full items-center ml-12 gap-8 hidden md:flex">
+    <a class="text-white/70 hover:text-white font-medium transition-colors" href="../live_feed_light_mode/code.html" data-i18n="nav_live">Live Feed</a>
+    <a class="text-white/70 hover:text-white font-medium transition-colors" href="../map_view_light_mode/code.html" data-i18n="nav_map">Map</a>
+    <a class="text-white/70 hover:text-white font-medium transition-colors" href="../analytics_light_mode/code.html" data-i18n="nav_analytics">Analytics</a>
+    <a class="text-white/70 hover:text-white font-medium transition-colors" href="../dispatch_dark_mode/code.html" data-i18n="nav_dispatch">Dispatch</a>
+    <a class="text-white font-bold border-b-[3px] border-white h-full flex items-center pt-1 px-1" href="#" data-i18n="nav_upload">Upload &amp; Analyze</a>
+  </nav>
+
+  <!-- Trailing actions -->
+  <div class="ml-auto flex items-center gap-4">
+    <!-- Language Pills -->
+    <div class="flex bg-white/10 rounded-full p-0.5 border border-white/20" id="lang-pills">
+      <button onclick="setLang('KN')" class="lang-pill px-3 py-1 text-[11px] font-bold text-white/50 hover:text-white transition-all rounded-full" data-lang="KN">ಕನ್ನಡ</button>
+      <button onclick="setLang('EN')" class="lang-pill px-3 py-1 text-[11px] font-bold text-white bg-white/20 rounded-full" data-lang="EN">EN</button>
+      <button onclick="setLang('HI')" class="lang-pill px-3 py-1 text-[11px] font-bold text-white/50 hover:text-white transition-all rounded-full" data-lang="HI">हिं</button>
+    </div>
+    <button data-theme-toggle class="p-2 text-white hover:bg-white/10 rounded-full transition-colors" title="Toggle theme">
+      <span class="material-symbols-outlined">dark_mode</span>
+    </button>
+    <button class="relative p-2 text-white hover:bg-white/10 rounded-full transition-colors">
+      <span class="material-symbols-outlined">notifications</span>
+      <span class="absolute top-1 right-1 w-4 h-4 bg-error text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-primary">3</span>
+    </button>
+    <div class="flex items-center gap-3 pl-2 border-l border-white/20">
+      <div class="text-right hidden sm:block">
+        <p class="text-[12px] font-bold text-white leading-none">Officer RP</p>
+        <p class="text-[10px] text-white/70 leading-none mt-1">Unit-04 Silk Board</p>
+      </div>
+      <div class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-primary font-black shadow-inner overflow-hidden">
+        <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwhgMmZLGb5QM9lbMe-1P-FIb0ZqBF2i5nogMf5qbyHaSKR_XL0lNNXluh_xRZ238RYJLoBv8TVIf6fQ2T6C9c-Khn87zylnC7xb1_xAgJz_A9OAScrXacm-l1PDXoiBQ7rv_sP-AB89nv5J-KiPfM7XFELV8xyozDYazaqD_7FC1ZliIegfaPsGTQiOSlsYd7T0c6xqu_YLolzzIErW1vPlroi4NLsMMANM0WFyqlGTxKx6nDv8DBI1fXovFwjUOfAQKGWz3i2-0R" alt="Officer avatar">
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Accent bar below header -->
+<div class="fixed top-[64px] left-0 w-full h-[3px] bg-secondary-container z-40"></div>
+
+<!-- ═══════════════════════════════════════════
+     MAIN CONTENT
+     ═══════════════════════════════════════════ -->
+<main class="pt-[76px] pb-12 px-4 flex flex-col items-center">
+  <div class="w-full max-w-[700px]">
+
+    <!-- Page title -->
+    <div class="mb-6">
+      <h1 class="font-headline-h1 text-headline-h1 text-on-surface" data-i18n="nav_upload">Upload &amp; Analyze</h1>
+      <p class="text-on-surface-variant font-body-md mt-1" data-i18n="page_subtitle">Submit a traffic image for AI-powered violation detection</p>
+    </div>
+
+    <!-- ─── DROP ZONE ─── -->
+    <div id="dropzone-wrap" class="mb-4">
+
+      <!-- Empty / prompt state -->
+      <div id="dropzone-empty"
+           class="dropzone-ring rounded-lg p-10 flex flex-col items-center justify-center gap-3 cursor-pointer bg-surface-container-lowest card-shadow"
+           onclick="document.getElementById('file-input').click()"
+           ondragover="handleDragOver(event)"
+           ondragleave="handleDragLeave(event)"
+           ondrop="handleDrop(event)">
+        <span class="material-symbols-outlined text-5xl text-primary" style="font-variation-settings:'FILL' 0;">cloud_upload</span>
+        <p class="font-headline-h3 text-headline-h3 text-on-surface text-center" data-i18n="dropzone_label">Drop traffic image here or click to upload</p>
+        <p class="text-body-sm text-on-surface-variant">JPG or PNG, up to 10MB</p>
+      </div>
+
+      <!-- Preview state (hidden until file selected) -->
+      <div id="dropzone-preview"
+           class="hidden rounded-lg border border-outline-variant bg-surface-container-lowest card-shadow p-4 flex items-center gap-4">
+        <img id="preview-img" src="" alt="Preview" class="w-20 h-20 object-cover rounded border border-outline-variant flex-shrink-0">
+        <div class="flex-1 min-w-0">
+          <p id="preview-name" class="font-body-md font-semibold text-on-surface truncate"></p>
+          <p id="preview-size" class="text-body-sm text-on-surface-variant mt-0.5"></p>
+        </div>
+        <button onclick="resetFile()" class="text-primary text-body-sm font-bold hover:underline flex-shrink-0">Change image</button>
+      </div>
+
+      <input id="file-input" type="file" accept="image/jpeg,image/png" class="hidden" onchange="handleFileSelect(event)">
+    </div>
+
+    <!-- ─── CAMERA ID / GPS ─── -->
+    <div class="mb-4">
+      <label class="block font-label-caps text-label-caps text-on-surface-variant mb-1.5 uppercase" data-i18n="field_camera_label">Camera ID or GPS Coordinates</label>
+
+      <!-- Camera selector (auto-populated from /cameras API) -->
+      <div class="flex gap-2">
+        <select id="camera-select"
+                class="h-9 px-3 rounded text-body-md border border-outline-variant bg-surface-container-lowest focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors flex-shrink-0"
+                onchange="onCameraSelectChange(this)"
+                style="min-width:180px">
+          <option value="">— Select camera —</option>
+          <option value="manual">✏ Enter manually…</option>
+        </select>
+
+        <!-- Manual text input, hidden by default, shown when "Enter manually" selected -->
+        <input id="camera-input"
+               type="text"
+               data-i18n-placeholder="field_camera_placeholder"
+               placeholder="e.g. CAM_047 or 12.9172, 77.6228"
+               class="hidden flex-1 h-9 px-3 rounded text-body-md border border-outline-variant bg-surface-container-lowest focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors">
+      </div>
+
+      <!-- Camera details chip — shown when a camera is selected -->
+      <div id="camera-chip" class="hidden mt-2 inline-flex items-center gap-2 bg-primary-fixed/50 border border-primary/20 rounded-full px-3 py-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-tertiary-container inline-block"></span>
+        <span id="camera-chip-text" class="text-body-sm font-medium text-primary"></span>
+        <span id="camera-chip-trust" class="text-[10px] font-bold text-on-surface-variant"></span>
+      </div>
+    </div>
+
+    <!-- ─── ANALYZE BUTTON ─── -->
+    <button id="analyze-btn"
+            onclick="submitAnalysis()"
+            disabled
+            class="w-full h-10 bg-primary text-on-primary font-bold rounded flex items-center justify-center gap-2 shadow-sm opacity-50 cursor-not-allowed transition-all">
+      <span class="material-symbols-outlined text-[18px]">search</span>
+      <span data-i18n="btn_analyze">Analyze Image</span>
+    </button>
+
+    <!-- ─── INLINE ERROR ─── -->
+    <div id="error-banner" class="hidden mt-4 p-4 rounded-lg border border-error/30 bg-error-container/30">
+      <p class="font-body-md font-bold text-error flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">error</span>
+        <span id="error-main">Analysis failed — check your connection and try again</span>
+      </p>
+      <p id="error-detail" class="text-body-sm text-on-surface-variant mt-1 font-mono break-all"></p>
+      <p class="text-body-sm text-on-surface-variant mt-2">
+        If you see <strong>GEMINI_API_KEY is not set</strong> — open
+        <code class="bg-surface-container px-1 rounded">trafficguard_backend/.env</code>
+        and paste your Gemini key from
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-primary underline">aistudio.google.com</a>,
+        then restart the server.
+      </p>
+    </div>
+
+    <!-- ─── RESULTS CARD ─── -->
+    <div id="results-card" class="hidden mt-6 bg-surface-container-lowest rounded-lg border border-outline-variant card-shadow overflow-hidden">
+
+      <!-- Card header -->
+      <div class="px-6 py-4 bg-surface-container-low border-b border-outline-variant flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <p class="font-label-caps text-label-caps text-on-surface-variant uppercase">Case ID</p>
+          <p id="res-case-id" class="font-plate-display text-plate-display text-on-surface mt-0.5"></p>
+        </div>
+        <div id="res-overall-severity" class="px-3 py-1 rounded text-[11px] font-black uppercase tracking-wide"></div>
+      </div>
+
+      <div class="p-6 flex flex-col gap-5">
+
+        <!-- NO-VIOLATION state -->
+        <div id="res-no-violation" class="hidden flex items-center gap-3 py-4 px-5 bg-surface-container rounded-lg border border-outline-variant">
+          <span class="material-symbols-outlined text-tertiary text-3xl" style="font-variation-settings:'FILL' 1;">check_circle</span>
+          <p class="font-headline-h3 text-headline-h3 text-tertiary" data-i18n="no_violation">No violation detected in this frame</p>
+        </div>
+
+        <!-- VIOLATION BLOCK -->
+        <div id="res-violation-block">
+
+          <!-- Plate + Location row -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+            <div>
+              <p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1" data-i18n="label_plate">License Plate</p>
+              <div class="inline-flex items-center gap-2 bg-surface-container border border-outline-variant rounded px-3 py-1.5">
+                <span id="res-plate" class="font-plate-display text-plate-display text-on-surface tracking-[0.1em]"></span>
+                <span id="res-plate-invalid" class="hidden text-[10px] bg-error text-on-error px-1.5 py-0.5 rounded font-bold">INVALID</span>
+              </div>
+            </div>
+            <div>
+              <p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1">Location</p>
+              <p id="res-location" class="text-body-md text-on-surface font-medium"></p>
+            </div>
+          </div>
+
+          <!-- Violations badges -->
+          <div class="mb-5">
+            <p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2">Violations</p>
+            <div id="res-violations-list" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <!-- Summary -->
+          <div class="mb-5 p-4 rounded-lg bg-primary-fixed/40 border border-primary/10">
+            <p class="font-label-caps text-label-caps text-primary uppercase mb-1" data-i18n="label_summary">Summary</p>
+            <p id="res-summary" class="text-body-md italic text-on-surface"></p>
+          </div>
+
+          <!-- Status row -->
+          <div id="res-status-row" class="mb-5 flex flex-col gap-1.5">
+            <div id="res-challan-pill" class="hidden w-fit px-3 py-1.5 rounded-full text-[11px] font-black flex items-center gap-1.5 bg-tertiary-container text-on-tertiary-container">
+              <span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">receipt_long</span>
+              <span data-i18n="status_challan">Auto-Challan Issued</span>
+            </div>
+            <div id="res-review-pill" class="hidden w-fit px-3 py-1.5 rounded-full text-[11px] font-black flex items-center gap-1.5 bg-secondary-container text-on-secondary-container">
+              <span class="material-symbols-outlined text-[14px]">pending</span>
+              <span data-i18n="status_review">Pending Human Review</span>
+            </div>
+            <p id="res-review-reason" class="hidden text-body-sm text-on-surface-variant pl-1"></p>
+          </div>
+
+          <!-- Critical Reoffender Banner -->
+          <div id="res-reoffender" class="hidden mb-5 rounded-lg border-l-4 border-error bg-error-container/40 p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-error text-[20px]" style="font-variation-settings:'FILL' 1;">warning</span>
+              <p class="font-headline-h3 text-headline-h3 font-black text-error uppercase" data-i18n="label_reoffender">Critical Reoffender</p>
+            </div>
+            <p id="res-reoffender-count" class="font-body-md text-on-error-container font-bold mb-1"></p>
+            <p id="res-reoffender-locations" class="text-body-sm text-on-surface-variant"></p>
+          </div>
+
+          <!-- Action buttons -->
+          <div id="res-actions" class="flex flex-col sm:flex-row gap-3">
+            <a id="btn-pdf" href="#" target="_blank"
+               class="flex-1 flex items-center justify-center gap-2 py-2 border border-primary text-primary rounded font-bold text-body-sm hover:bg-primary-fixed transition-colors">
+              <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+              <span data-i18n="btn_pdf">Generate Evidence PDF</span>
+            </a>
+            <a id="btn-map" href="#" target="_blank"
+               class="flex-1 flex items-center justify-center gap-2 py-2 border border-primary text-primary rounded font-bold text-body-sm hover:bg-primary-fixed transition-colors">
+              <span class="material-symbols-outlined text-[18px]">map</span>
+              <span data-i18n="btn_map">View on Map</span>
+            </a>
+          </div>
+
+        </div><!-- /violation-block -->
+
+        <!-- Analyze Another -->
+        <div class="pt-4 border-t border-outline-variant text-center">
+          <button onclick="resetAll()" class="text-primary font-bold text-body-md hover:underline flex items-center gap-1 mx-auto">
+            <span class="material-symbols-outlined text-[18px]">restart_alt</span>
+            Analyze Another
+          </button>
+        </div>
+
+      </div><!-- /p-6 -->
+    </div><!-- /results-card -->
+
+  </div><!-- /max-w-700 -->
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════
+const API_BASE = "http://localhost:8000";
+
+// ═══════════════════════════════════════════════════════
+// I18N DICTIONARY
+// ═══════════════════════════════════════════════════════
+const TRANSLATIONS = {
+  EN: {
+    brand: "TrafficGuard AI",
+    brand_sub: "Bengaluru Traffic Police",
+    nav_live: "Live Feed",
+    nav_map: "Map",
+    nav_analytics: "Analytics",
+    nav_dispatch: "Dispatch",
+    nav_upload: "Upload & Analyze",
+    page_subtitle: "Submit a traffic image for AI-powered violation detection",
+    dropzone_label: "Drop traffic image here or click to upload",
+    field_camera_label: "Camera ID or GPS Coordinates",
+    field_camera_placeholder: "e.g. CAM_047 or 12.9172, 77.6228",
+    btn_analyze: "Analyze Image",
+    btn_analyzing: "Analyzing...",
+    label_plate: "License Plate",
+    label_severity: "Severity",
+    label_confidence: "Confidence",
+    label_summary: "Summary",
+    btn_pdf: "Generate Evidence PDF",
+    btn_map: "View on Map",
+    status_challan: "Auto-Challan Issued",
+    status_review: "Pending Human Review",
+    label_reoffender: "Critical Reoffender",
+    no_violation: "No violation detected in this frame"
+  },
+  KN: {
+    brand: "TrafficGuard AI",
+    brand_sub: "ಬೆಂಗಳೂರು ಸಂಚಾರ ಪೊಲೀಸ್",
+    nav_live: "ನೇರ ಪ್ರಸಾರ",
+    nav_map: "ನಕ್ಷೆ",
+    nav_analytics: "ವಿಶ್ಲೇಷಣೆ",
+    nav_dispatch: "ರವಾನೆ",
+    nav_upload: "ಅಪ್‌ಲೋಡ್ ಮತ್ತು ವಿಶ್ಲೇಷಿಸಿ",
+    page_subtitle: "AI-ಆಧಾರಿತ ಉಲ್ಲಂಘನೆ ಪತ್ತೆಗಾಗಿ ಟ್ರಾಫಿಕ್ ಚಿತ್ರ ಸಲ್ಲಿಸಿ",
+    dropzone_label: "ಟ್ರಾಫಿಕ್ ಚಿತ್ರವನ್ನು ಇಲ್ಲಿ ಬಿಡಿ ಅಥವಾ ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
+    field_camera_label: "ಕ್ಯಾಮೆರಾ ID ಅಥವಾ GPS ನಿರ್ದೇಶಾಂಕಗಳು",
+    field_camera_placeholder: "ಉದಾ. CAM_047 ಅಥವಾ 12.9172, 77.6228",
+    btn_analyze: "ಚಿತ್ರ ವಿಶ್ಲೇಷಿಸಿ",
+    btn_analyzing: "ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...",
+    label_plate: "ನೋಂದಣಿ ಫಲಕ",
+    label_severity: "ತೀವ್ರತೆ",
+    label_confidence: "ವಿಶ್ವಾಸಾರ್ಹತೆ",
+    label_summary: "ಸಾರಾಂಶ",
+    btn_pdf: "ಸಾಕ್ಷ್ಯ PDF ರಚಿಸಿ",
+    btn_map: "ನಕ್ಷೆಯಲ್ಲಿ ವೀಕ್ಷಿಸಿ",
+    status_challan: "ಸ್ವಯಂಚಾಲಿತ ಚಲನ್ ನೀಡಲಾಗಿದೆ",
+    status_review: "ಮಾನವ ಪರಿಶೀಲನೆ ಬಾಕಿ",
+    label_reoffender: "ನಿರ್ಣಾಯಕ ಮರು-ಅಪರಾಧಿ",
+    no_violation: "ಈ ಚೌಕಟ್ಟಿನಲ್ಲಿ ಯಾವುದೇ ಉಲ್ಲಂಘನೆ ಪತ್ತೆಯಾಗಿಲ್ಲ"
+  },
+  HI: {
+    brand: "TrafficGuard AI",
+    brand_sub: "बेंगलुरु यातायात पुलिस",
+    nav_live: "लाइव फ़ीड",
+    nav_map: "मानचित्र",
+    nav_analytics: "विश्लेषण",
+    nav_dispatch: "डिस्पैच",
+    nav_upload: "अपलोड और विश्लेषण करें",
+    page_subtitle: "AI-संचालित उल्लंघन पहचान के लिए ट्रैफ़िक छवि सबमिट करें",
+    dropzone_label: "ट्रैफ़िक छवि यहाँ छोड़ें या अपलोड करने हेतु क्लिक करें",
+    field_camera_label: "कैमरा आईडी या जीपीएस निर्देशांक",
+    field_camera_placeholder: "जैसे CAM_047 या 12.9172, 77.6228",
+    btn_analyze: "छवि का विश्लेषण करें",
+    btn_analyzing: "विश्लेषण हो रहा है...",
+    label_plate: "लाइसेंस प्लेट",
+    label_severity: "गंभीरता",
+    label_confidence: "विश्वास स्तर",
+    label_summary: "सारांश",
+    btn_pdf: "साक्ष्य पीडीएफ़ बनाएं",
+    btn_map: "मानचित्र पर देखें",
+    status_challan: "स्वचालित चालान जारी",
+    status_review: "मानव समीक्षा लंबित",
+    label_reoffender: "गंभीर पुनः अपराधी",
+    no_violation: "इस फ़्रेम में कोई उल्लंघन नहीं पाया गया"
+  }
+};
+
+let currentLang = localStorage.getItem('tg_lang') || 'EN';
+let selectedFile = null;
+
+// ─── Language switcher ───────────────────────────────
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('tg_lang', lang);
+  applyTranslations();
+  // update pill highlight
+  document.querySelectorAll('.lang-pill').forEach(p => {
+    const active = p.dataset.lang === lang;
+    p.classList.toggle('bg-white/20', active);
+    p.classList.toggle('rounded-full', active);
+    p.classList.toggle('text-white', true);
+    p.classList.toggle('text-white/50', !active);
+    p.style.fontWeight = active ? '700' : '700';
+  });
+}
+
+function applyTranslations() {
+  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.EN;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (t[key] !== undefined) el.textContent = t[key];
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder;
+    if (t[key] !== undefined) el.placeholder = t[key];
+  });
+  // also update analyze button text (may be in spinner state, skip if analyzing)
+  const btn = document.getElementById('analyze-btn');
+  if (btn && !btn.dataset.analyzing) {
+    btn.querySelector('[data-i18n="btn_analyze"]') && (btn.querySelector('[data-i18n="btn_analyze"]').textContent = t.btn_analyze);
+  }
+}
+
+// ─── File handling ───────────────────────────────────
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (file) setFile(file);
+}
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('dropzone-empty').classList.add('drag-over');
+}
+function handleDragLeave(e) {
+  document.getElementById('dropzone-empty').classList.remove('drag-over');
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropzone-empty').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) setFile(file);
+}
+
+function setFile(file) {
+  selectedFile = file;
+  // show preview
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.getElementById('preview-img').src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  document.getElementById('preview-name').textContent = file.name;
+  document.getElementById('preview-size').textContent = (file.size / 1024).toFixed(1) + ' KB';
+  document.getElementById('dropzone-empty').classList.add('hidden');
+  document.getElementById('dropzone-preview').classList.remove('hidden');
+  enableAnalyzeBtn();
+}
+
+function resetFile() {
+  selectedFile = null;
+  document.getElementById('file-input').value = '';
+  document.getElementById('dropzone-empty').classList.remove('hidden');
+  document.getElementById('dropzone-preview').classList.add('hidden');
+  disableAnalyzeBtn();
+}
+
+function enableAnalyzeBtn() {
+  const btn = document.getElementById('analyze-btn');
+  btn.disabled = false;
+  btn.classList.remove('opacity-50', 'cursor-not-allowed');
+}
+function disableAnalyzeBtn() {
+  const btn = document.getElementById('analyze-btn');
+  btn.disabled = true;
+  btn.classList.add('opacity-50', 'cursor-not-allowed');
+}
+
+// ─── GPS parser ──────────────────────────────────────
+const GPS_REGEX = /^(-?\d+\.?\d*),\s*(-?\d+\.?\d*)$/;
+
+// ─── Camera state ─────────────────────────────────────
+let _cameras = [];  // loaded from /cameras API
+let _selectedCameraId = '';
+let _selectedLat = null;
+let _selectedLng = null;
+
+async function loadCameras() {
+  try {
+    const res = await fetch(`${API_BASE}/cameras`);
+    if (!res.ok) return;
+    _cameras = await res.json();
+    const sel = document.getElementById('camera-select');
+    // Clear existing options except first two
+    while (sel.options.length > 2) sel.remove(2);
+    _cameras.forEach(cam => {
+      const opt = document.createElement('option');
+      opt.value = cam.camera_id;
+      opt.dataset.lat = cam.lat || '';
+      opt.dataset.lng = cam.lng || '';
+      opt.dataset.trust = cam.trust_score || '';
+      opt.dataset.loc = cam.location_name || '';
+      const statusIcon = cam.status === 'maintenance' ? '🔴' : '🟢';
+      opt.textContent = `${statusIcon} ${cam.camera_id} — ${cam.location_name || 'Unknown'}`;
+      if (cam.status === 'maintenance') opt.disabled = true;
+      sel.add(opt, 1);  // insert before "Enter manually"
+    });
+    // Auto-select first active camera
+    const firstActive = _cameras.find(c => c.status !== 'maintenance');
+    if (firstActive) {
+      sel.value = firstActive.camera_id;
+      onCameraSelectChange(sel);
+    }
+  } catch (e) {
+    console.warn('Could not load cameras:', e);
+  }
+}
+
+function onCameraSelectChange(sel) {
+  const val = sel.value;
+  const manualInput = document.getElementById('camera-input');
+  const chip = document.getElementById('camera-chip');
+
+  if (val === 'manual' || val === '') {
+    manualInput.classList.remove('hidden');
+    chip.classList.add('hidden');
+    _selectedCameraId = '';
+    _selectedLat = null;
+    _selectedLng = null;
+    return;
+  }
+
+  manualInput.classList.add('hidden');
+  const opt = sel.options[sel.selectedIndex];
+  _selectedCameraId = val;
+  _selectedLat = parseFloat(opt.dataset.lat) || null;
+  _selectedLng = parseFloat(opt.dataset.lng) || null;
+
+  // Show chip with location + trust score
+  const trust = parseFloat(opt.dataset.trust) || 0;
+  const trustColor = trust >= 0.85 ? '#006b22' : trust >= 0.6 ? '#705d00' : '#ba1a1a';
+  document.getElementById('camera-chip-text').textContent = `${val} — ${opt.dataset.loc || 'Unknown'}`;
+  const trustEl = document.getElementById('camera-chip-trust');
+  trustEl.textContent = `Trust: ${(trust * 100).toFixed(0)}%`;
+  trustEl.style.color = trustColor;
+  chip.classList.remove('hidden');
+}
+
+// ─── Submit ──────────────────────────────────────────
+async function submitAnalysis() {
+  if (!selectedFile) return;
+  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.EN;
+
+  const btn = document.getElementById('analyze-btn');
+  btn.dataset.analyzing = '1';
+  btn.disabled = true;
+  btn.classList.add('opacity-80');
+  btn.innerHTML = `<span class="material-symbols-outlined text-[18px] spin">sync</span> <span>${t.btn_analyzing}</span>`;
+
+  hideError();
+  document.getElementById('results-card').classList.add('hidden');
+
+  // Resolve camera/location from the select or manual input
+  const manualInput = document.getElementById('camera-input');
+  const cameraInput = manualInput.classList.contains('hidden')
+    ? ''
+    : manualInput.value.trim();
+
+  const formData = new FormData();
+  formData.append('file', selectedFile);
+
+  if (_selectedCameraId) {
+    // Camera was chosen from dropdown — send id + coords
+    formData.append('camera_id', _selectedCameraId);
+    if (_selectedLat !== null) formData.append('lat', _selectedLat);
+    if (_selectedLng !== null) formData.append('lng', _selectedLng);
+  } else {
+    // Manual input — parse GPS or treat as camera_id
+    const gpsMatch = cameraInput.match(GPS_REGEX);
+    if (gpsMatch) {
+      formData.append('lat', parseFloat(gpsMatch[1]));
+      formData.append('lng', parseFloat(gpsMatch[2]));
+    } else if (cameraInput) {
+      formData.append('camera_id', cameraInput);
+    }
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/analyze`, { method: 'POST', body: formData });
+    if (!res.ok) {
+      let detail = `HTTP ${res.status}`;
+      try {
+        const errJson = await res.json();
+        detail = errJson.detail || JSON.stringify(errJson);
+      } catch (_) {
+        detail = await res.text().catch(() => detail);
+      }
+      throw new Error(detail);
+    }
+    const data = await res.json();
+    renderResults(data);
+  } catch (err) {
+    showError(err.message);
+  } finally {
+    delete btn.dataset.analyzing;
+    btn.disabled = false;
+    btn.classList.remove('opacity-80');
+    btn.innerHTML = `<span class="material-symbols-outlined text-[18px]">search</span> <span data-i18n="btn_analyze">${t.btn_analyze}</span>`;
+    if (!selectedFile) disableAnalyzeBtn();
+  }
+}
+
+// ─── Error display ───────────────────────────────────
+function showError(msg) {
+  document.getElementById('error-banner').classList.remove('hidden');
+  // Show a friendly main message + the raw detail
+  const isKeyMissing = msg.includes('ANTHROPIC_API_KEY');
+  const isConnFailed = msg.includes('Failed to fetch') || msg.includes('NetworkError');
+  document.getElementById('error-main').textContent = isConnFailed
+    ? 'Cannot reach the backend — is the server running on port 8000?'
+    : isKeyMissing
+    ? 'API key not configured — see instructions below'
+    : 'Analysis failed — check your connection and try again';
+  document.getElementById('error-detail').textContent = msg;
+}
+function hideError() {
+  document.getElementById('error-banner').classList.add('hidden');
+}
+
+// ─── Client-side PDF fallback (when backend PDF isn't available) ─────────────
+function generateClientPDF(d) {
+  var w = window.open('', '_blank');
+  var viols = (d.violations||[]).map(function(v){
+    return '<tr style="border-bottom:1px solid #e0e0e0">' +
+      '<td style="padding:6px 12px">' + (v.type||'').replace(/_/g,' ').toUpperCase() + '</td>' +
+      '<td style="padding:6px 12px;color:' + (v.severity==='HIGH'?'#ba1a1a':v.severity==='MEDIUM'?'#e65100':'#705d00') + '">' + (v.severity||'') + '</td>' +
+      '<td style="padding:6px 12px">' + Math.round((v.confidence||0)*100) + '%</td>' +
+      '<td style="padding:6px 12px">' + (v.description||'') + '</td>' +
+      '</tr>';
+  }).join('');
+  w.document.write('<html><head><title>Evidence Report – ' + (d.case_id||'') + '</title>' +
+    '<style>body{font-family:Inter,sans-serif;padding:32px;color:#1b1c1c}' +
+    'h1{color:#2874F0;font-size:22px}h2{font-size:15px;margin-top:24px;border-bottom:2px solid #2874F0;padding-bottom:4px}' +
+    'table{border-collapse:collapse;width:100%}th{background:#2874F0;color:#fff;padding:8px 12px;text-align:left}' +
+    '.plate{font-family:JetBrains Mono,monospace;font-size:18px;letter-spacing:.1em;color:#2874F0}' +
+    '.badge{display:inline-block;padding:2px 10px;border-radius:4px;font-weight:700;font-size:12px}' +
+    '@media print{button{display:none}}' +
+    '</style></head><body>' +
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
+    '<div><h1>TrafficGuard AI — Evidence Report</h1>' +
+    '<p style="color:#727786;font-size:13px">Bengaluru Traffic Police · Automated Enforcement Unit</p></div>' +
+    '<div style="text-align:right;font-size:12px;color:#727786">' +
+    '<div>Case ID: <strong>' + (d.case_id||'—') + '</strong></div>' +
+    '<div>Generated: ' + new Date().toLocaleString() + '</div></div></div>' +
+    '<h2>Case Details</h2>' +
+    '<table><tr><th>Field</th><th>Value</th></tr>' +
+    '<tr><td>Camera</td><td>' + (d.camera_id||'—') + '</td></tr>' +
+    '<tr><td>Location</td><td>' + (d.location_name||'—') + '</td></tr>' +
+    '<tr><td>Scene Condition</td><td>' + (d.scene_condition||'—') + '</td></tr>' +
+    '<tr><td>Status</td><td>' + (d.status||'—') + '</td></tr>' +
+    '<tr><td>Challan Issued</td><td>' + (d.challan_issued?'Yes':'No') + '</td></tr>' +
+    '</table>' +
+    '<h2>License Plate</h2>' +
+    '<p class="plate">' + (d.plate||'Not detected') + '</p>' +
+    '<p>Valid: <strong>' + (d.plate_valid?'Yes':'No') + '</strong></p>' +
+    '<h2>Violations</h2>' +
+    '<table><tr><th>Type</th><th>Severity</th><th>Confidence</th><th>Description</th></tr>' +
+    viols + '</table>' +
+    (d.summary ? '<h2>AI Summary</h2><p style="font-style:italic;background:#eef3fe;padding:12px;border-radius:6px">' + d.summary + '</p>' : '') +
+    (d.review_reason ? '<h2>Review Reason</h2><p>' + d.review_reason + '</p>' : '') +
+    '<br><button onclick="window.print()" style="background:#2874F0;color:#fff;border:none;padding:10px 24px;border-radius:4px;font-weight:700;cursor:pointer;font-size:14px">🖨 Print / Save as PDF</button>' +
+    '</body></html>');
+  w.document.close();
+}
+
+// ─── Render results ──────────────────────────────────
+function renderResults(d) {
+  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.EN;
+  const card = document.getElementById('results-card');
+
+  // Case ID
+  document.getElementById('res-case-id').textContent = d.case_id || '—';
+
+  // Overall severity chip
+  const sevEl = document.getElementById('res-overall-severity');
+  sevEl.textContent = d.severity || '';
+  sevEl.className = 'px-3 py-1 rounded text-[11px] font-black uppercase tracking-wide ';
+  if (d.severity === 'HIGH')        sevEl.classList.add('severity-high');
+  else if (d.severity === 'MEDIUM') sevEl.classList.add('severity-medium');
+  else if (d.severity === 'LOW')    sevEl.classList.add('severity-low');
+  else sevEl.classList.add('bg-surface-container text-on-surface-variant');
+
+  const noViol = d.status === 'no_violation';
+  document.getElementById('res-no-violation').classList.toggle('hidden', !noViol);
+  document.getElementById('res-violation-block').classList.toggle('hidden', noViol);
+
+  if (!noViol) {
+    // Plate
+    document.getElementById('res-plate').textContent = d.plate || '—';
+    document.getElementById('res-plate-invalid').classList.toggle('hidden', d.plate_valid !== false);
+
+    // Location
+    document.getElementById('res-location').textContent = d.location_name || (d.camera_id || '—');
+
+    // Violations badges
+    const listEl = document.getElementById('res-violations-list');
+    listEl.innerHTML = '';
+    (d.violations || []).forEach(v => {
+      const badge = document.createElement('span');
+      const confPct = Math.round((v.confidence || 0) * 100);
+      badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-bold ';
+      if (v.severity === 'HIGH')        badge.classList.add('severity-high');
+      else if (v.severity === 'MEDIUM') badge.classList.add('severity-medium');
+      else                              badge.classList.add('severity-low');
+      const typeLabel = (v.type || '').replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+      badge.innerHTML = `${typeLabel} <span class="opacity-80">${confPct}%</span>`;
+      if (v.description) badge.title = v.description;
+      listEl.appendChild(badge);
+    });
+
+    // Summary
+    document.getElementById('res-summary').textContent = d.summary || '';
+
+    // Status pills
+    const challEl  = document.getElementById('res-challan-pill');
+    const reviewEl = document.getElementById('res-review-pill');
+    const reasonEl = document.getElementById('res-review-reason');
+    challEl.classList.toggle('hidden', !d.challan_issued);
+    reviewEl.classList.toggle('hidden', d.status !== 'pending_review');
+    if (d.status === 'pending_review' && d.review_reason) {
+      reasonEl.textContent = d.review_reason;
+      reasonEl.classList.remove('hidden');
+    } else {
+      reasonEl.classList.add('hidden');
+    }
+
+    // Reoffender banner
+    const reoffEl = document.getElementById('res-reoffender');
+    if (d.reoffender) {
+      document.getElementById('res-reoffender-count').textContent =
+        `${d.reoffender.offense_count} offenses in the last 7 days`;
+      document.getElementById('res-reoffender-locations').textContent =
+        'Locations: ' + (d.reoffender.locations || []).join(', ');
+      reoffEl.classList.remove('hidden');
+    } else {
+      reoffEl.classList.add('hidden');
+    }
+
+    // Action buttons
+    const actionsEl = document.getElementById('res-actions');
+    actionsEl.classList.toggle('hidden', noViol);
+    if (d.pdf_url) {
+      const pdfBtn = document.getElementById('btn-pdf');
+      pdfBtn.href = `${API_BASE}${d.pdf_url}`;
+      pdfBtn.removeAttribute('onclick');
+    } else {
+      // Fallback: generate a simple text-based PDF client-side using print
+      const pdfBtn = document.getElementById('btn-pdf');
+      pdfBtn.href = '#';
+      pdfBtn.onclick = function(e) {
+        e.preventDefault();
+        generateClientPDF(d);
+      };
+    }
+    if (d.map_pin) {
+      document.getElementById('btn-map').href =
+        `https://www.mappls.com/${d.map_pin.lat},${d.map_pin.lng}`;
+    }
+    // Translate action button labels
+    const pdfSpan = document.querySelector('#btn-pdf [data-i18n="btn_pdf"]');
+    const mapSpan = document.querySelector('#btn-map [data-i18n="btn_map"]');
+    if (pdfSpan) pdfSpan.textContent = t.btn_pdf;
+    if (mapSpan) mapSpan.textContent = t.btn_map;
+  }
+
+  card.classList.remove('hidden');
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─── Reset ───────────────────────────────────────────
+function resetAll() {
+  resetFile();
+  document.getElementById('camera-input').value = '';
+  _selectedCameraId = '';
+  _selectedLat = null;
+  _selectedLng = null;
+  // Re-select first camera
+  const sel = document.getElementById('camera-select');
+  if (sel && _cameras.length > 0) {
+    const firstActive = _cameras.find(c => c.status !== 'maintenance');
+    if (firstActive) { sel.value = firstActive.camera_id; onCameraSelectChange(sel); }
+  }
+  document.getElementById('results-card').classList.add('hidden');
+  hideError();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── Init ────────────────────────────────────────────
+(function init() {
+  setLang(currentLang);
+  loadCameras();  // auto-populate camera dropdown from API
+  // micro-interactions
+  document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('mousedown', () => btn.classList.add('scale-95'));
+    btn.addEventListener('mouseup',   () => btn.classList.remove('scale-95'));
+    btn.addEventListener('mouseleave',() => btn.classList.remove('scale-95'));
+  });
+})();
+</script>
+</body>
+</html>

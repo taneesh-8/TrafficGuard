@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Environment / secrets  ← DO NOT COMMIT THE REAL .env
+trafficguard_backend/.env
+
+# Database & uploads (runtime data, not source)
+trafficguard_backend/*.db
+trafficguard_backend/uploads/
+trafficguard_backend/evidence_output/
+
+# Temporary helper scripts created during development
+fix_encoding.py
+fix_all.py
+fix_final.py
+fix_hindi.py
+fix_livefeed.py
+find_hi.py
+patch_i18n.py
+patch_buttons.py
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Node (frontend static server)
+node_modules/

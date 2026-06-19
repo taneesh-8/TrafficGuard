@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TrafficGuard AI - Map View</title>
+<!-- ── Theme bootstrap ── -->
+<script>(function(){document.documentElement.className=localStorage.getItem('tg_theme')||'light';})();</script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Leaflet.js — real navigable map tiles (no API key needed) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="../tg-theme.js" defer></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-fixed-variant": "#004299",
+                      "primary-fixed-dim": "#afc6ff",
+                      "secondary-fixed": "#ffe16d",
+                      "on-tertiary-fixed": "#002105",
+                      "on-error-container": "#93000a",
+                      "secondary-container": "#fcd400",
+                      "outline": "#727786",
+                      "on-surface-variant": "#424754",
+                      "tertiary-fixed-dim": "#67df72",
+                      "background": "#fcf9f8",
+                      "on-secondary-fixed-variant": "#544600",
+                      "inverse-primary": "#afc6ff",
+                      "on-background": "#1b1c1c",
+                      "on-primary-fixed": "#001944",
+                      "tertiary-fixed": "#83fc8b",
+                      "surface-tint": "#0059c8",
+                      "secondary-fixed-dim": "#e9c400",
+                      "secondary": "#705d00",
+                      "on-tertiary-fixed-variant": "#005318",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-container": "#6e5c00",
+                      "primary-fixed": "#d9e2ff",
+                      "outline-variant": "#c2c6d6",
+                      "on-error": "#ffffff",
+                      "on-primary-container": "#fefcff",
+                      "inverse-surface": "#303030",
+                      "on-surface": "#1b1c1c",
+                      "error": "#ba1a1a",
+                      "primary-container": "#1f6feb",
+                      "inverse-on-surface": "#f3f0ef",
+                      "surface": "#fcf9f8",
+                      "surface-variant": "#e5e2e1",
+                      "surface-container-high": "#eae7e7",
+                      "surface-container": "#f0eded",
+                      "surface-dim": "#dcd9d9",
+                      "surface-container-low": "#f6f3f2",
+                      "surface-bright": "#fcf9f8",
+                      "error-container": "#ffdad6",
+                      "on-tertiary": "#ffffff",
+                      "primary": "#0056c3",
+                      "tertiary-container": "#00872d",
+                      "surface-container-highest": "#e5e2e1",
+                      "on-secondary-fixed": "#221b00",
+                      "tertiary": "#006b22",
+                      "on-tertiary-container": "#f7fff1",
+                      "on-primary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container_max_width": "1440px",
+                      "accent_bar": "3px",
+                      "gutter": "16px",
+                      "margin_mobile": "16px",
+                      "header_height": "64px",
+                      "margin_desktop": "24px"
+              },
+              "fontFamily": {
+                      "body-md": ["Inter"],
+                      "headline-h2": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "plate-display": ["JetBrains Mono"],
+                      "headline-h1": ["Inter"],
+                      "headline-h3": ["Inter"],
+                      "label-caps": ["Inter"]
+              },
+              "fontSize": {
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-h2": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "plate-display": ["16px", {"lineHeight": "24px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                      "headline-h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-h3": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+                      "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .map-grid-overlay {
+            background-image: 
+                linear-gradient(#E8EDF5 1px, transparent 1px),
+                linear-gradient(90deg, #E8EDF5 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .marker-pulse {
+            animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(.33); }
+            80%, 100% { opacity: 0; }
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #E0E0E0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #bdbdbd; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-hidden h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin_desktop h-[64px] bg-surface-container-lowest shadow-sm border-b-[3px] border-secondary-container">
+<div class="flex items-center gap-8">
+<h1 class="font-headline-h1 text-headline-h1 font-bold text-primary">TrafficGuard AI</h1>
+<nav class="hidden md:flex gap-6 h-full items-center translate-y-[2px]">
+<a class="text-on-surface-variant font-medium hover:bg-surface-variant transition-colors duration-200 px-2 py-1 rounded" href="../live_feed_light_mode/code.html" data-i18n="nav_live">Live Feed</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1" href="#" data-i18n="nav_map">Map</a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-variant transition-colors duration-200 px-2 py-1 rounded" href="../analytics_light_mode/code.html" data-i18n="nav_analytics">Analytics</a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-variant transition-colors duration-200 px-2 py-1 rounded" href="../dispatch_dark_mode/code.html" data-i18n="nav_dispatch">Dispatch</a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-variant transition-colors duration-200 px-2 py-1 rounded" href="../upload_analyze/code.html" data-i18n="nav_upload">Upload &amp; Analyze</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<input class="bg-surface-container h-9 px-10 rounded-lg border-none focus:ring-2 focus:ring-primary w-64 text-body-md" placeholder="Search Camera or Plate..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant transition-colors duration-200" onclick="document.getElementById('lang-pills-map').classList.toggle('hidden')">
+<span class="material-symbols-outlined text-on-surface-variant">language</span>
+</button>
+<button data-theme-toggle class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant transition-colors duration-200" title="Toggle theme">
+<span class="material-symbols-outlined text-on-surface-variant">dark_mode</span>
+</button>
+<div class="flex items-center bg-surface-container rounded-full px-2 py-0.5 gap-1 border border-outline-variant" id="lang-pills-map">
+<button onclick="setLang('KN')" class="lang-pill px-2 py-0.5 text-[10px] font-bold text-on-surface-variant hover:text-primary rounded-full transition-all" data-lang="KN">ಕನ್ನಡ</button>
+<button onclick="setLang('EN')" class="lang-pill px-2 py-0.5 text-[10px] font-bold text-primary bg-primary-fixed rounded-full" data-lang="EN">EN</button>
+<button onclick="setLang('HI')" class="lang-pill px-2 py-0.5 text-[10px] font-bold text-on-surface-variant hover:text-primary rounded-full transition-all" data-lang="HI">हिं</button>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant transition-colors duration-200">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-outline-variant">
+<div class="text-right hidden lg:block">
+<p class="font-headline-h3 text-headline-h3 leading-none">Insp. Ravi Kumar</p>
+<p class="font-label-caps text-label-caps text-on-surface-variant">Silk Board Unit-04</p>
+</div>
+<img class="w-10 h-10 rounded-full border border-outline-variant object-cover" data-alt="A professional headshot of a police officer in an Indian Traffic Police uniform, looking forward with authority. The image has a clean, high-key studio lighting with a neutral blurred office background. The uniform details are sharp and clear, fitting the institutional trust and professional corporate aesthetic of the application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBA8mW7443hiCckvau_OyWsRdukNb5fsqL0nolsg5ivgdVrcP6b0gZ4cTIPlNym7i8VyQxqUDdJDDPIarwIe-Dd18WU5pVUrht2F2td6BgorcCysXd4Xyl2ho9JMd1-EMg8Iu1APHWuAApLoVEk89ztFhlGwdzdsxAmgp6Bp-7C3EnFq1rMybGVviaJXm3tpApSghYOzvC8vWN6FW7ljiOldd9YkrRadYhGgV4Qhb2ZXW1fsoRy47507uQr449R4RcjVe-k_N7EZczF"/>
+</div>
+</div>
+</header>
+<main class="flex-1 flex mt-[64px] relative overflow-hidden">
+<!-- SideNavBar (Internal Desktop Only) -->
+<aside class="hidden lg:flex flex-col h-full w-[280px] bg-surface-container border-r border-outline-variant py-6 px-4 gap-2 shrink-0">
+<div class="mb-6 px-2">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">security</span>
+</div>
+<div>
+<h2 class="font-headline-h3 text-headline-h3 text-primary">BTP Enforcement</h2>
+<p class="font-label-caps text-label-caps text-on-surface-variant">Unit-04 Silk Board</p>
+</div>
+</div>
+<button onclick="window.location.href='../upload_analyze/code.html'" class="w-full mt-4 bg-primary text-white font-headline-h3 py-3 rounded-lg flex items-center justify-center gap-2 shadow-md hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined">add_alert</span>
+                    New Alert
+                </button>
+</div>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant rounded-lg transition-colors" href="../live_feed_light_mode/code.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 bg-primary-container text-on-primary-container px-4 py-3 rounded-lg shadow-sm translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">map</span>
+<span class="font-label-caps text-label-caps">Map View</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant rounded-lg transition-colors" href="../analytics_light_mode/code.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Analytics</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant rounded-lg transition-colors" href="../dispatch_dark_mode/code.html">
+<span class="material-symbols-outlined">send</span>
+<span class="font-label-caps text-label-caps">Dispatch</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant rounded-lg transition-colors" href="../upload_analyze/code.html">
+<span class="material-symbols-outlined">upload_file</span>
+<span class="font-label-caps text-label-caps">Upload &amp; Analyze</span>
+</a>
+<div class="mt-auto pt-6 border-t border-outline-variant flex flex-col gap-1">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant rounded-lg transition-colors" href="../live_feed_light_mode/code.html">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-caps text-label-caps">Support</span>
+</a>
+</div>
+</aside>
+<!-- Map Area -->
+<section class="flex-1 relative" id="map-section">
+
+  <!-- ── Leaflet map fills the whole section ── -->
+  <div id="leaflet-map" class="absolute inset-0" style="z-index:1"></div>
+
+  <!-- ── Layer toggle panel ── -->
+  <div class="absolute left-4 top-4 flex flex-col gap-2 z-[500]">
+    <div class="bg-white rounded-xl shadow-lg border border-outline-variant p-1 flex flex-col gap-0.5">
+      <button id="btn-heatmap"    onclick="toggleLayer('heatmap',this)"
+              class="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary text-white text-[13px] font-bold transition-all whitespace-nowrap">
+        <span class="material-symbols-outlined text-[18px]">local_fire_department</span>Heatmap
+      </button>
+      <button id="btn-cameras"    onclick="toggleLayer('cameras',this)"
+              class="flex items-center gap-2 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-variant text-[13px] font-bold transition-all whitespace-nowrap">
+        <span class="material-symbols-outlined text-[18px]">videocam</span>Cameras
+      </button>
+      <button id="btn-reoffender" onclick="toggleLayer('reoffender',this)"
+              class="flex items-center gap-2 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-variant text-[13px] font-bold transition-all whitespace-nowrap">
+        <span class="material-symbols-outlined text-[18px]">warning</span>Reoffender Zones
+      </button>
+      <button id="btn-signals"    onclick="toggleLayer('signals',this)"
+              class="flex items-center gap-2 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-variant text-[13px] font-bold transition-all whitespace-nowrap">
+        <span class="material-symbols-outlined text-[18px]">traffic</span>Signal Status
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Legend ── -->
+  <div class="absolute bottom-8 left-4 bg-white/95 backdrop-blur-sm rounded-lg border border-outline-variant shadow px-3 py-2 z-[500] flex flex-col gap-1">
+    <p class="text-[9px] font-bold uppercase tracking-wider text-on-surface-variant mb-0.5">Legend</p>
+    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-error   inline-block flex-shrink-0"></span><span class="text-[11px] font-medium">High severity</span></div>
+    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#e65100] inline-block flex-shrink-0"></span><span class="text-[11px] font-medium">Medium severity</span></div>
+    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-secondary-container inline-block flex-shrink-0"></span><span class="text-[11px] font-medium">Low severity</span></div>
+    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-primary   inline-block flex-shrink-0"></span><span class="text-[11px] font-medium">Camera</span></div>
+    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#9c27b0] inline-block flex-shrink-0"></span><span class="text-[11px] font-medium">Reoffender</span></div>
+  </div>
+
+  <!-- ── Floating right sidebar ── -->
+  <aside class="absolute top-0 right-0 h-full w-[340px] bg-white border-l border-outline-variant flex flex-col shadow-2xl overflow-y-auto z-[500]">
+    <!-- Violation Breakdown -->
+    <div class="p-5 border-b border-outline-variant">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="font-headline-h2 text-headline-h2">Violation Breakdown</h2>
+        <span class="font-label-caps text-label-caps text-on-primary-fixed-variant bg-primary-fixed px-2 py-0.5 rounded">Today</span>
+      </div>
+      <div id="violation-breakdown" class="space-y-3">
+        <!-- Populated by JS from /analytics/summary -->
+        <div class="flex justify-between items-center mb-1"><span class="font-body-md text-body-md font-medium">Helmet Violation</span><span class="font-headline-h3 text-headline-h3">89</span></div>
+        <div class="w-full bg-surface-container h-2 rounded-full overflow-hidden"><div class="bg-primary h-full rounded-full" style="width:89%"></div></div>
+        <div class="flex justify-between items-center mb-1"><span class="font-body-md text-body-md font-medium">Red Light Jumping</span><span class="font-headline-h3 text-headline-h3">61</span></div>
+        <div class="w-full bg-surface-container h-2 rounded-full overflow-hidden"><div class="bg-primary h-full rounded-full" style="width:61%"></div></div>
+        <div class="flex justify-between items-center mb-1"><span class="font-body-md text-body-md font-medium">Wrong Side Driving</span><span class="font-headline-h3 text-headline-h3">44</span></div>
+        <div class="w-full bg-surface-container h-2 rounded-full overflow-hidden"><div class="bg-primary h-full rounded-full" style="width:44%"></div></div>
+      </div>
+    </div>
+    <!-- Reoffender Alerts -->
+    <div class="p-5 border-b border-outline-variant">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="font-headline-h2 text-headline-h2">Reoffender Alerts</h2>
+        <a href="../analytics_light_mode/code.html" class="text-primary text-body-sm font-bold hover:underline">View All</a>
+      </div>
+      <div id="reoffender-list" class="space-y-2">
+        <div class="bg-error-container/30 border border-error/10 p-3 rounded-lg flex items-center gap-3">
+          <div class="w-9 h-9 bg-error rounded-lg flex items-center justify-center text-white font-bold text-[11px] flex-shrink-0">KA</div>
+          <div class="flex-1 min-w-0">
+            <p class="font-plate-display text-[13px] tracking-widest text-on-error-container truncate">KA03MX4521</p>
+            <p class="text-[10px] font-bold text-error uppercase">Level 4 Offender</p>
+          </div>
+          <button onclick="focusPoint(12.9172,77.6228)" class="w-7 h-7 rounded-full bg-white flex items-center justify-center shadow-sm text-error flex-shrink-0">
+            <span class="material-symbols-outlined text-[16px]">visibility</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Camera Status -->
+    <div class="p-5">
+      <h2 class="font-headline-h2 text-headline-h2 mb-3">Camera Status</h2>
+      <table class="w-full text-left">
+        <thead><tr class="border-b border-outline-variant">
+          <th class="pb-2 font-label-caps text-label-caps text-on-surface-variant">CAM ID</th>
+          <th class="pb-2 font-label-caps text-label-caps text-on-surface-variant text-center">STATUS</th>
+          <th class="pb-2 font-label-caps text-label-caps text-on-surface-variant text-right">TRUST</th>
+        </tr></thead>
+        <tbody id="camera-status-tbody" class="divide-y divide-outline-variant/50">
+          <tr><td colspan="3" class="py-3 text-body-sm text-on-surface-variant text-center">Loading cameras…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </aside>
+
+</section>
+</main>
+<!-- Footer Status Bar -->
+<footer class="h-8 bg-surface-container-highest border-t border-outline-variant px-margin_desktop flex items-center justify-between z-50">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-tertiary-container rounded-full animate-pulse"></span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">System Online</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Latency: 24ms</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-label-caps text-label-caps text-on-surface-variant">12:45:08 IST</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Silk Board Junction - Active</span>
+</div>
+</footer>
+<script>
+// ═══════════════════════════════════════════════════════
+// TRAFFICGUARD AI — LEAFLET MAP ENGINE
+// Real OSM tiles, fully navigable, live data from backend
+// ═══════════════════════════════════════════════════════
+(function () {
+  const API = 'http://localhost:8000';
+
+  // ── Init Leaflet map centred on Bengaluru ──────────────────────────────
+  const map = L.map('leaflet-map', {
+    center: [12.9716, 77.5946],
+    zoom: 12,
+    zoomControl: true,
+    attributionControl: true
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: 'Bengaluru Traffic Map • TrafficGuard AI | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  // ── Layer groups ──────────────────────────────────────────────────────
+  const groups = {
+    heatmap:    L.layerGroup().addTo(map),   // on by default
+    cameras:    L.layerGroup(),
+    reoffender: L.layerGroup(),
+    signals:    L.layerGroup()
+  };
+
+  // ── Seed data (shown immediately; overwritten once API responds) ────────
+  const SEED_HOTSPOTS = [
+    { lat:12.9172, lng:77.6228, count:12, severity:'HIGH',   name:'Silk Board Junction'      },
+    { lat:12.9591, lng:77.7001, count:8,  severity:'MEDIUM', name:'Marathahalli Bridge'       },
+    { lat:12.9352, lng:77.6245, count:5,  severity:'LOW',    name:'Koramangala 80ft Road'     },
+    { lat:13.0358, lng:77.5970, count:4,  severity:'MEDIUM', name:'Hebbal Flyover'            },
+    { lat:12.9757, lng:77.6073, count:3,  severity:'LOW',    name:'MG Road Metro Station'     },
+    { lat:12.9784, lng:77.6408, count:6,  severity:'HIGH',   name:'Indiranagar 12th Main'     },
+  ];
+
+  const SEED_CAMERAS = [
+    { camera_id:'CAM_047', lat:12.9172, lng:77.6228, trust_score:0.94, status:'active',      location_name:'Silk Board Junction'   },
+    { camera_id:'CAM_012', lat:12.9591, lng:77.7001, trust_score:0.88, status:'active',      location_name:'Marathahalli Bridge'   },
+    { camera_id:'CAM_031', lat:12.9352, lng:77.6245, trust_score:0.91, status:'active',      location_name:'Koramangala 80ft Road' },
+    { camera_id:'CAM_008', lat:13.0358, lng:77.5970, trust_score:0.76, status:'active',      location_name:'Hebbal Flyover'        },
+    { camera_id:'CAM_055', lat:12.9757, lng:77.6073, trust_score:0.62, status:'active',      location_name:'MG Road Metro Station' },
+    { camera_id:'CAM_099', lat:12.9784, lng:77.6408, trust_score:0.50, status:'maintenance', location_name:'Indiranagar 12th Main' },
+  ];
+
+  const SEED_SIGNALS = [
+    { lat:12.9172, lng:77.6228, name:'Silk Board Jct',       state:'red'    },
+    { lat:12.9591, lng:77.7001, name:'Marathahalli Bridge',  state:'green'  },
+    { lat:12.9352, lng:77.6245, name:'Koramangala 80ft',     state:'yellow' },
+    { lat:13.0358, lng:77.5970, name:'Hebbal Flyover',       state:'green'  },
+    { lat:12.9757, lng:77.6073, name:'MG Road Metro',        state:'red'    },
+    { lat:12.9784, lng:77.6408, name:'Indiranagar 12th Main',state:'green'  },
+  ];
+
+  // ── SVG marker helpers ─────────────────────────────────────────────────
+  function circleIcon(color, size, label) {
+    const s = size || 32;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 ${s} ${s}">
+      <circle cx="${s/2}" cy="${s/2}" r="${s/2-2}" fill="${color}" fill-opacity="0.85" stroke="#fff" stroke-width="2"/>
+      ${label ? `<text x="${s/2}" y="${s/2+4}" text-anchor="middle" fill="#fff" font-size="${s/3}px" font-family="Inter,sans-serif" font-weight="700">${label}</text>` : ''}
+    </svg>`;
+    return L.divIcon({ html: svg, className: '', iconSize: [s,s], iconAnchor: [s/2,s/2] });
+  }
+
+  function heatIcon(severity, count) {
+    const col = severity==='HIGH' ? '#ba1a1a' : severity==='MEDIUM' ? '#e65100' : '#e09900';
+    const s = Math.min(56, 28 + count * 2);
+    return circleIcon(col, s, count);
+  }
+
+  function cameraIcon(cam) {
+    const col = cam.status === 'maintenance' ? '#ba1a1a' : '#2874F0';
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
+      <circle cx="15" cy="15" r="13" fill="${col}" stroke="#fff" stroke-width="2"/>
+      <text x="15" y="20" text-anchor="middle" font-size="14px">📷</text>
+    </svg>`;
+    return L.divIcon({ html: svg, className: '', iconSize: [30,30], iconAnchor: [15,15] });
+  }
+
+  function signalIcon(state) {
+    const col = state==='red' ? '#ba1a1a' : state==='green' ? '#006b22' : '#e65100';
+    return circleIcon(col, 20, '');
+  }
+
+  function reoffIcon() {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34">
+      <circle cx="17" cy="17" r="15" fill="#9c27b0" fill-opacity="0.8" stroke="#fff" stroke-width="2" stroke-dasharray="4 3"/>
+      <text x="17" y="22" text-anchor="middle" fill="#fff" font-size="16px">⚠</text>
+    </svg>`;
+    return L.divIcon({ html: svg, className: '', iconSize: [34,34], iconAnchor: [17,17] });
+  }
+
+  // ── Populate layers ────────────────────────────────────────────────────
+  function buildHeatmap(spots) {
+    groups.heatmap.clearLayers();
+    spots.forEach(h => {
+      const m = L.marker([h.lat, h.lng], { icon: heatIcon(h.severity, h.count) })
+        .bindPopup(`<b>${h.name||h.location_name||''}</b><br>${h.count} violation${h.count>1?'s':''}<br>Severity: <b>${h.severity}</b>`, { maxWidth: 200 });
+      groups.heatmap.addLayer(m);
+
+      // Pulsing circle for HIGH
+      if (h.severity === 'HIGH') {
+        L.circle([h.lat, h.lng], { radius: 300, color:'#ba1a1a', fillColor:'#ba1a1a', fillOpacity:0.08, weight:1 }).addTo(groups.heatmap);
+      }
+    });
+  }
+
+  function buildCameras(cams) {
+    groups.cameras.clearLayers();
+    cams.forEach(c => {
+      if (!c.lat) return;
+      const trust = (c.trust_score * 100).toFixed(0);
+      const statusColor = c.status === 'maintenance' ? 'color:#ba1a1a' : 'color:#006b22';
+      L.marker([c.lat, c.lng], { icon: cameraIcon(c) })
+        .bindPopup(`<b style="font-family:JetBrains Mono,monospace">${c.camera_id}</b><br>${c.location_name||''}<br>Trust: <b>${trust}%</b><br>Status: <b style="${statusColor}">${c.status}</b>`, { maxWidth: 200 })
+        .addTo(groups.cameras);
+    });
+    populateCameraTable(cams);
+  }
+
+  function buildSignals(sigs) {
+    groups.signals.clearLayers();
+    sigs.forEach(s => {
+      const stateLabel = s.state.toUpperCase();
+      L.marker([s.lat, s.lng], { icon: signalIcon(s.state) })
+        .bindPopup(`<b>${s.name}</b><br>Signal: <b>${stateLabel}</b>`, { maxWidth: 180 })
+        .addTo(groups.signals);
+    });
+  }
+
+  function buildReoffenders(list) {
+    groups.reoffender.clearLayers();
+    list.forEach(r => {
+      const lat = r.lat || (SEED_HOTSPOTS.find(h=>h.name===r.locations?.[0])?.lat);
+      const lng = r.lng || (SEED_HOTSPOTS.find(h=>h.name===r.locations?.[0])?.lng);
+      if (!lat) return;
+      L.marker([lat, lng], { icon: reoffIcon() })
+        .bindPopup(`<b style="font-family:JetBrains Mono,monospace">${r.plate}</b><br>${r.offense_count} offenses<br>${(r.locations||[]).join(', ')}`, { maxWidth: 220 })
+        .addTo(groups.reoffender);
+    });
+  }
+
+  // ── Camera Status Table ────────────────────────────────────────────────
+  function populateCameraTable(cams) {
+    const tbody = document.getElementById('camera-status-tbody');
+    if (!tbody || !cams.length) return;
+    tbody.innerHTML = cams.map(c => {
+      const dot = c.status==='maintenance' ? '#ba1a1a' : c.trust_score>=0.85 ? '#00872d' : '#e65100';
+      const tc  = c.trust_score>=0.85 ? '#006b22' : c.trust_score>=0.6 ? '#705d00' : '#ba1a1a';
+      return `<tr class="hover:bg-surface-container-low transition-colors cursor-pointer"
+                  onclick="window._focusCam(${c.lat},${c.lng},'${c.camera_id}')">
+        <td class="py-2 font-body-sm text-body-sm font-medium">${c.camera_id}</td>
+        <td class="py-2 text-center"><span style="width:10px;height:10px;background:${dot};border-radius:50%;display:inline-block"></span></td>
+        <td class="py-2 text-right font-body-sm text-body-sm font-bold" style="color:${tc}">${(c.trust_score*100).toFixed(0)}%</td>
+      </tr>`;
+    }).join('');
+  }
+
+  window._focusCam = function(lat, lng, id) {
+    if (!lat) return;
+    map.flyTo([lat, lng], 15, { duration: 1 });
+    if (!groups.cameras._map) { groups.cameras.addTo(map); layers.cameras = true; styleBtn('cameras', true); }
+  };
+
+  window.focusPoint = function(lat, lng) { map.flyTo([lat, lng], 15, { duration: 1 }); };
+
+  // ── Layer toggle ──────────────────────────────────────────────────────
+  const layers = { heatmap:true, cameras:false, reoffender:false, signals:false };
+
+  function styleBtn(key, on) {
+    const btn = document.getElementById('btn-'+key);
+    if (!btn) return;
+    btn.classList.toggle('bg-primary',           on);
+    btn.classList.toggle('text-white',           on);
+    btn.classList.toggle('text-on-surface-variant', !on);
+    btn.classList.toggle('hover:bg-surface-variant', !on);
+  }
+
+  window.toggleLayer = function(key, btn) {
+    layers[key] = !layers[key];
+    if (layers[key]) groups[key].addTo(map);
+    else             map.removeLayer(groups[key]);
+    styleBtn(key, layers[key]);
+  };
+
+  // ── Fetch live data ───────────────────────────────────────────────────
+  async function loadData() {
+    try {
+      const [camRes, hmRes, roRes] = await Promise.all([
+        fetch(`${API}/cameras`).catch(()=>null),
+        fetch(`${API}/analytics/heatmap`).catch(()=>null),
+        fetch(`${API}/analytics/reoffenders`).catch(()=>null),
+      ]);
+      if (camRes?.ok) buildCameras(await camRes.json());
+      if (hmRes?.ok)  { const d = await hmRes.json(); if(d.length) buildHeatmap(d); }
+      if (roRes?.ok)  { const d = await roRes.json(); buildReoffenders(d); }
+    } catch(e) { console.warn('Map data:', e); }
+  }
+
+  // ── Initial render with seed data ────────────────────────────────────
+  buildHeatmap(SEED_HOTSPOTS);
+  buildCameras(SEED_CAMERAS);
+  buildSignals(SEED_SIGNALS);
+
+  // Load live data (replaces seed if available)
+  loadData();
+  setInterval(loadData, 30000);
+
+})();
+</script>
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// BENGALURU CANVAS MAP ENGINE
+// Draws a simplified but realistic street map of the Silk Board / ORR area,
+// loads camera + violation data from the backend, and makes all layer
+// buttons + zoom/locate controls fully interactive.
+// ═══════════════════════════════════════════════════════════════════════════
+(function () {
+  const API = 'http://localhost:8000';
+  const canvas = document.getElementById('map-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  // ── Geo bounds (Bengaluru central area) ─────────────────────────────────
+  const BOUNDS = { minLat: 12.88, maxLat: 13.05, minLng: 77.55, maxLng: 77.72 };
+
+  // ── View state ────────────────────────────────────────────────────────────
+  let scale   = 1;
+  let offsetX = 0, offsetY = 0;
+  let isDragging = false, dragStartX = 0, dragStartY = 0;
+
+  // ── Layer visibility ──────────────────────────────────────────────────────
+  const layers = { heatmap: true, cameras: false, reoffender: false, signals: false };
+
+  // ── Data from API ──────────────────────────────────────────────────────────
+  let cameras   = [];
+  let heatmap   = [];
+  let reoffenders = [];
+
+  // ── Fixed signal data (Bengaluru junctions) ───────────────────────────────
+  const signals = [
+    { lat: 12.9172, lng: 77.6228, name: 'Silk Board Jct',     state: 'red'   },
+    { lat: 12.9591, lng: 77.7001, name: 'Marathahalli Bridge', state: 'green' },
+    { lat: 12.9352, lng: 77.6245, name: 'Koramangala 80ft',    state: 'yellow'},
+    { lat: 13.0358, lng: 77.5970, name: 'Hebbal Flyover',      state: 'green' },
+    { lat: 12.9757, lng: 77.6073, name: 'MG Road Metro',       state: 'red'   },
+    { lat: 12.9784, lng: 77.6408, name: 'Indiranagar 12th Main',state:'green' },
+  ];
+
+  // ── Coordinate → canvas ───────────────────────────────────────────────────
+  function geoToCanvas(lat, lng) {
+    const W = canvas.width, H = canvas.height;
+    const x = (lng - BOUNDS.minLng) / (BOUNDS.maxLng - BOUNDS.minLng) * W;
+    const y = (1 - (lat - BOUNDS.minLat) / (BOUNDS.maxLat - BOUNDS.minLat)) * H;
+    return { x: x * scale + offsetX, y: y * scale + offsetY };
+  }
+
+  // ── Resize ────────────────────────────────────────────────────────────────
+  function resize() {
+    const sec = document.getElementById('map-section');
+    canvas.width  = sec.offsetWidth;
+    canvas.height = sec.offsetHeight;
+    draw();
+  }
+  window.addEventListener('resize', resize);
+
+  // ── Road network (simplified Bengaluru street polylines in lat/lng) ────────
+  // Each entry: { name, color, width, points:[[lat,lng],...] }
+  const ROADS = [
+    // Outer Ring Road (ORR) arc
+    { name:'Outer Ring Road', color:'#c8cdd8', width:5, points:[
+      [12.887,77.660],[12.900,77.688],[12.917,77.700],[12.942,77.711],
+      [12.959,77.700],[12.972,77.690],[12.990,77.673],[13.005,77.650],
+      [13.015,77.625],[13.018,77.595],[13.012,77.568]
+    ]},
+    // Hosur Road / NICE corridor
+    { name:'Hosur Road', color:'#c8cdd8', width:5, points:[
+      [12.910,77.605],[12.915,77.615],[12.917,77.623],[12.920,77.632],
+      [12.926,77.640],[12.938,77.653],[12.956,77.661]
+    ]},
+    // Bellary Road / NH44
+    { name:'Bellary Road (NH44)', color:'#c8cdd8', width:5, points:[
+      [12.980,77.594],[12.995,77.595],[13.008,77.596],[13.022,77.596],
+      [13.035,77.597],[13.050,77.598]
+    ]},
+    // MG Road / Brigade Road
+    { name:'MG Road', color:'#b8bcc8', width:4, points:[
+      [12.975,77.595],[12.976,77.605],[12.976,77.615],[12.976,77.625],
+      [12.975,77.635],[12.974,77.645]
+    ]},
+    // Sarjapur Road
+    { name:'Sarjapur Road', color:'#c8cdd8', width:4, points:[
+      [12.903,77.655],[12.912,77.660],[12.920,77.665],[12.928,77.668],
+      [12.938,77.669],[12.950,77.668]
+    ]},
+    // Intermediate Ring Road
+    { name:'Intermediate Ring Road', color:'#d0d4df', width:3, points:[
+      [12.960,77.575],[12.965,77.595],[12.970,77.615],[12.973,77.638],
+      [12.972,77.660],[12.968,77.678],[12.961,77.695]
+    ]},
+    // Indiranagar – HAL road
+    { name:'HAL Road', color:'#d0d4df', width:3, points:[
+      [12.976,77.640],[12.977,77.652],[12.978,77.660],[12.978,77.670]
+    ]},
+    // Electronic City road
+    { name:'Electronic City Rd', color:'#d0d4df', width:3, points:[
+      [12.887,77.660],[12.880,77.655],[12.865,77.652],[12.854,77.660],[12.840,77.677]
+    ]},
+  ];
+
+  // ── Draw full scene ────────────────────────────────────────────────────────
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // Background — light map colour
+    ctx.fillStyle = '#e8edf5';
+    ctx.fillRect(0, 0, W, H);
+
+    // Water bodies (Bellandur Lake area, simplified)
+    ctx.fillStyle = '#c5d9ef';
+    ctx.beginPath();
+    const lake = [[12.914,77.673],[12.918,77.678],[12.921,77.683],[12.918,77.688],
+                  [12.913,77.688],[12.910,77.682],[12.909,77.675]];
+    lake.forEach((p, i) => {
+      const pt = geoToCanvas(p[0], p[1]);
+      i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
+    });
+    ctx.closePath();
+    ctx.fill();
+
+    // Parks / green areas
+    ctx.fillStyle = '#c8e6c9';
+    const parks = [
+      [[12.978,77.590],[12.980,77.595],[12.978,77.600],[12.974,77.597]],
+      [[12.995,77.618],[12.997,77.624],[12.994,77.625],[12.992,77.620]],
+    ];
+    parks.forEach(park => {
+      ctx.beginPath();
+      park.forEach((p, i) => {
+        const pt = geoToCanvas(p[0], p[1]);
+        i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.closePath();
+      ctx.fill();
+    });
+
+    // Roads
+    ROADS.forEach(road => {
+      ctx.beginPath();
+      ctx.strokeStyle = road.color;
+      ctx.lineWidth   = road.width * scale * 0.8;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      road.points.forEach((p, i) => {
+        const pt = geoToCanvas(p[0], p[1]);
+        i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Road label at midpoint (only at decent zoom)
+      if (scale >= 1.2) {
+        const mid = road.points[Math.floor(road.points.length / 2)];
+        const pt  = geoToCanvas(mid[0], mid[1]);
+        ctx.fillStyle = '#666';
+        ctx.font = `${Math.max(9, 9 * scale)}px Inter, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(road.name, pt.x, pt.y - 6 * scale);
+      }
+    });
+
+    // ── Layer: Heatmap ───────────────────────────────────────────────────────
+    if (layers.heatmap) {
+      const hotspots = heatmap.length > 0
+        ? heatmap.map(h => ({ lat: h.lat, lng: h.lng, count: h.count, sev: h.severity }))
+        : [
+          { lat: 12.9172, lng: 77.6228, count: 12, sev: 'HIGH'   },
+          { lat: 12.9591, lng: 77.7001, count: 8,  sev: 'MEDIUM' },
+          { lat: 12.9352, lng: 77.6245, count: 5,  sev: 'LOW'    },
+          { lat: 12.9784, lng: 77.6408, count: 3,  sev: 'LOW'    },
+        ];
+
+      hotspots.forEach(h => {
+        const pt  = geoToCanvas(h.lat, h.lng);
+        const r   = (20 + h.count * 3) * scale;
+        const col = h.sev === 'HIGH' ? '#ba1a1a' : h.sev === 'MEDIUM' ? '#e65100' : '#fcd400';
+        const grd = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, r);
+        grd.addColorStop(0, col.replace(')', ',0.55)').replace('rgb', 'rgba').replace('#', 'rgba(0,0,0,').replace('0,0,0,', hexToRgb(col) + ','));
+        // Simpler:
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = col + '44';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, r * 0.4, 0, Math.PI * 2);
+        ctx.fillStyle = col + '88';
+        ctx.fill();
+
+        // Cluster badge
+        const bR = 14 * scale;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, bR, 0, Math.PI * 2);
+        ctx.fillStyle = col;
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = `bold ${Math.max(10, 10 * scale)}px Inter, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(h.count, pt.x, pt.y);
+      });
+    }
+
+    // ── Layer: Cameras ───────────────────────────────────────────────────────
+    if (layers.cameras) {
+      const cams = cameras.length > 0
+        ? cameras
+        : [
+          { camera_id:'CAM_047', lat:12.9172, lng:77.6228, trust_score:0.94, status:'active',    location_name:'Silk Board Jct' },
+          { camera_id:'CAM_012', lat:12.9591, lng:77.7001, trust_score:0.88, status:'active',    location_name:'Marathahalli'   },
+          { camera_id:'CAM_031', lat:12.9352, lng:77.6245, trust_score:0.91, status:'active',    location_name:'Koramangala'    },
+          { camera_id:'CAM_008', lat:13.0358, lng:77.5970, trust_score:0.76, status:'active',    location_name:'Hebbal'         },
+          { camera_id:'CAM_055', lat:12.9757, lng:77.6073, trust_score:0.62, status:'active',    location_name:'MG Road'        },
+          { camera_id:'CAM_099', lat:12.9784, lng:77.6408, trust_score:0.50, status:'maintenance',location_name:'Indiranagar'   },
+        ];
+      cams.forEach(cam => {
+        if (!cam.lat) return;
+        const pt  = geoToCanvas(cam.lat, cam.lng);
+        const col = cam.status === 'maintenance' ? '#ba1a1a' : '#2874F0';
+        const r   = 8 * scale;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = col;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        // Trust badge
+        ctx.font = `bold ${Math.max(8, 8 * scale)}px Inter, sans-serif`;
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('📷', pt.x, pt.y);
+        if (scale >= 1.1) {
+          ctx.fillStyle = '#1b1c1c';
+          ctx.font = `${Math.max(9, 9 * scale)}px Inter, sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.fillText(`${cam.camera_id} (${(cam.trust_score * 100).toFixed(0)}%)`, pt.x, pt.y + r + 10 * scale);
+        }
+      });
+    }
+
+    // ── Layer: Reoffender Zones ───────────────────────────────────────────────
+    if (layers.reoffender) {
+      const zones = reoffenders.length > 0
+        ? reoffenders
+        : [
+          { lat:12.9172, lng:77.6228, plate:'KA03MX4521', count:4 },
+          { lat:12.9784, lng:77.6408, plate:'DL01AB9999', count:3 },
+        ];
+      zones.forEach(z => {
+        const pt = geoToCanvas(z.lat, z.lng);
+        const r  = 22 * scale;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(186,26,26,0.15)';
+        ctx.fill();
+        ctx.strokeStyle = '#ba1a1a';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.font = `bold ${Math.max(9,9*scale)}px JetBrains Mono, monospace`;
+        ctx.fillStyle = '#ba1a1a';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(z.plate || '⚠', pt.x, pt.y);
+      });
+    }
+
+    // ── Layer: Signal Status ─────────────────────────────────────────────────
+    if (layers.signals) {
+      signals.forEach(sig => {
+        const pt   = geoToCanvas(sig.lat, sig.lng);
+        const col  = sig.state === 'red' ? '#ba1a1a' : sig.state === 'green' ? '#006b22' : '#e65100';
+        const r    = 9 * scale;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = col;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        if (scale >= 1.0) {
+          ctx.fillStyle = '#1b1c1c';
+          ctx.font = `${Math.max(8, 8 * scale)}px Inter, sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'top';
+          ctx.fillText(sig.name, pt.x, pt.y + r + 4 * scale);
+        }
+      });
+    }
+
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
+  }
+
+  function hexToRgb(hex) {
+    const r = parseInt(hex.slice(1,3),16);
+    const g = parseInt(hex.slice(3,5),16);
+    const b = parseInt(hex.slice(5,7),16);
+    return `${r},${g},${b}`;
+  }
+
+  // ── Layer toggle ──────────────────────────────────────────────────────────
+  window.toggleLayer = function(key, btn) {
+    layers[key] = !layers[key];
+    // Style active/inactive
+    btn.classList.toggle('bg-primary',    layers[key]);
+    btn.classList.toggle('text-white',    layers[key]);
+    btn.classList.toggle('text-on-surface-variant', !layers[key]);
+    btn.classList.toggle('hover:bg-surface-variant', !layers[key]);
+    draw();
+  };
+
+  // ── Zoom ──────────────────────────────────────────────────────────────────
+  let zoomLevel = 0;
+  window.mapZoom = function(dir) {
+    zoomLevel = Math.max(-3, Math.min(5, zoomLevel + dir));
+    scale = Math.pow(1.35, zoomLevel);
+    // Keep map centred
+    const W = canvas.width, H = canvas.height;
+    offsetX = W / 2 * (1 - scale);
+    offsetY = H / 2 * (1 - scale);
+    draw();
+  };
+
+  window.mapLocate = function() {
+    zoomLevel = 0; scale = 1; offsetX = 0; offsetY = 0; draw();
+  };
+
+  // ── Pan (drag) ────────────────────────────────────────────────────────────
+  canvas.addEventListener('mousedown', e => {
+    isDragging = true;
+    dragStartX = e.clientX - offsetX;
+    dragStartY = e.clientY - offsetY;
+    canvas.style.cursor = 'grabbing';
+  });
+  canvas.addEventListener('mousemove', e => {
+    if (isDragging) {
+      offsetX = e.clientX - dragStartX;
+      offsetY = e.clientY - dragStartY;
+      draw();
+    }
+    // Tooltip hit-test
+    showTooltipFor(e);
+  });
+  canvas.addEventListener('mouseup',   () => { isDragging = false; canvas.style.cursor = 'grab'; });
+  canvas.addEventListener('mouseleave',() => { isDragging = false; hideTooltip(); });
+
+  // Mouse wheel zoom
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    const dir = e.deltaY < 0 ? 1 : -1;
+    window.mapZoom(dir);
+  }, { passive: false });
+
+  // ── Tooltip ───────────────────────────────────────────────────────────────
+  function showTooltipFor(e) {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const HIT = 16 * scale;
+
+    let hit = null;
+
+    if (layers.heatmap) {
+      const hs = heatmap.length > 0 ? heatmap : [
+        { lat:12.9172,lng:77.6228,count:12,severity:'HIGH', location_name:'Silk Board Junction' },
+        { lat:12.9591,lng:77.7001,count:8, severity:'MEDIUM',location_name:'Marathahalli Bridge' },
+        { lat:12.9352,lng:77.6245,count:5, severity:'LOW',  location_name:'Koramangala 80ft Rd' },
+      ];
+      hs.forEach(h => {
+        const pt = geoToCanvas(h.lat, h.lng);
+        if (Math.hypot(mx - pt.x, my - pt.y) < HIT) {
+          hit = { title: h.location_name || `${h.lat.toFixed(4)}, ${h.lng.toFixed(4)}`,
+                  body:  `${h.count} violation${h.count>1?'s':''} · Severity: ${h.severity}` };
+        }
+      });
+    }
+    if (!hit && layers.cameras) {
+      const cams = cameras.length > 0 ? cameras : [
+        { camera_id:'CAM_047', lat:12.9172, lng:77.6228, trust_score:0.94, location_name:'Silk Board Jct' },
+        { camera_id:'CAM_012', lat:12.9591, lng:77.7001, trust_score:0.88, location_name:'Marathahalli'   },
+      ];
+      cams.forEach(c => {
+        if (!c.lat) return;
+        const pt = geoToCanvas(c.lat, c.lng);
+        if (Math.hypot(mx - pt.x, my - pt.y) < HIT) {
+          hit = { title: c.camera_id, body: `${c.location_name} · Trust: ${(c.trust_score*100).toFixed(0)}% · ${c.status}` };
+        }
+      });
+    }
+    if (!hit && layers.signals) {
+      signals.forEach(s => {
+        const pt = geoToCanvas(s.lat, s.lng);
+        if (Math.hypot(mx - pt.x, my - pt.y) < HIT) {
+          hit = { title: s.name, body: `Signal: ${s.state.toUpperCase()}` };
+        }
+      });
+    }
+
+    if (hit) {
+      const tt = document.getElementById('map-tooltip');
+      document.getElementById('tt-title').textContent = hit.title;
+      document.getElementById('tt-body').textContent  = hit.body;
+      tt.style.left = (e.clientX - canvas.getBoundingClientRect().left + 12) + 'px';
+      tt.style.top  = (e.clientY - canvas.getBoundingClientRect().top  - 10) + 'px';
+      tt.classList.remove('hidden');
+      canvas.style.cursor = 'pointer';
+    } else {
+      hideTooltip();
+      if (!isDragging) canvas.style.cursor = 'grab';
+    }
+  }
+  function hideTooltip() {
+    document.getElementById('map-tooltip').classList.add('hidden');
+  }
+
+  // ── Load data from backend ────────────────────────────────────────────────
+  async function loadData() {
+    try {
+      const [camRes, hmRes] = await Promise.all([
+        fetch(`${API}/cameras`).catch(() => null),
+        fetch(`${API}/analytics/heatmap`).catch(() => null),
+      ]);
+      if (camRes?.ok) cameras   = await camRes.json();
+      if (hmRes?.ok)  heatmap   = await hmRes.json();
+      // Load live camera data into sidebar table
+      populateCameraTable();
+      draw();
+    } catch (e) { console.warn('Map data load failed:', e); }
+  }
+
+  function populateCameraTable() {
+    if (!cameras.length) return;
+    const tbody = document.querySelector('#camera-status-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    cameras.forEach(c => {
+      const colDot = c.status === 'maintenance' ? '#ba1a1a' : c.trust_score >= 0.85 ? '#00872d' : '#e65100';
+      const trustColor = c.trust_score >= 0.85 ? '#006b22' : c.trust_score >= 0.6 ? '#705d00' : '#ba1a1a';
+      tbody.innerHTML += `
+        <tr class="hover:bg-surface-container-low transition-colors cursor-pointer" onclick="focusCamera(${c.lat},${c.lng},'${c.camera_id}')">
+          <td class="py-3 font-body-sm text-body-sm font-medium">${c.camera_id}</td>
+          <td class="py-3 text-center"><span style="width:10px;height:10px;background:${colDot};border-radius:50%;display:inline-block"></span></td>
+          <td class="py-3 text-right font-body-sm text-body-sm font-bold" style="color:${trustColor}">${(c.trust_score*100).toFixed(0)}%</td>
+        </tr>`;
+    });
+  }
+
+  window.focusCamera = function(lat, lng, id) {
+    if (!lat) return;
+    zoomLevel = 2; scale = Math.pow(1.35, 2);
+    const W = canvas.width, H = canvas.height;
+    const pt = { x:(lng-BOUNDS.minLng)/(BOUNDS.maxLng-BOUNDS.minLng)*W, y:(1-(lat-BOUNDS.minLat)/(BOUNDS.maxLat-BOUNDS.minLat))*H };
+    offsetX = W/2 - pt.x * scale;
+    offsetY = H/2 - pt.y * scale;
+    if (!layers.cameras) { layers.cameras = true; document.getElementById('btn-cameras').click(); }
+    draw();
+  };
+
+  // ── Boot ─────────────────────────────────────────────────────────────────
+  resize();
+  loadData();
+  // Refresh live data every 30 s
+  setInterval(loadData, 30000);
+})();
+</script>
+<script>
+// ─── Shared i18n for Map View ───────────────────────
+const TG_TRANSLATIONS = {
+  EN: { nav_live:"Live Feed", nav_map:"Map", nav_analytics:"Analytics", nav_dispatch:"Dispatch", nav_upload:"Upload & Analyze" },
+  KN: { nav_live:"ನೇರ ಪ್ರಸಾರ", nav_map:"ನಕ್ಷೆ", nav_analytics:"ವಿಶ್ಲೇಷಣೆ", nav_dispatch:"ರವಾನೆ", nav_upload:"ಅಪ್‌ಲೋಡ್ ಮತ್ತು ವಿಶ್ಲೇಷಿಸಿ" },
+  HI: { nav_live:"लाइव फ़ीड", nav_map:"मानचित्र", nav_analytics:"विश्लेषण", nav_dispatch:"डिस्पैच", nav_upload:"अपलोड और विश्लेषण करें" }
+};
+function setLang(lang) {
+  localStorage.setItem('tg_lang', lang);
+  const t = TG_TRANSLATIONS[lang] || TG_TRANSLATIONS.EN;
+  document.querySelectorAll('[data-i18n]').forEach(el => { if(t[el.dataset.i18n]) el.textContent = t[el.dataset.i18n]; });
+  document.querySelectorAll('.lang-pill').forEach(p => {
+    const active = p.dataset.lang === lang;
+    p.className = 'lang-pill px-2 py-0.5 text-[10px] font-bold rounded-full transition-all ' +
+      (active ? 'text-primary bg-primary-fixed' : 'text-on-surface-variant hover:text-primary');
+  });
+}
+(function(){
+  setLang(localStorage.getItem('tg_lang') || 'EN');
+  // show pills always
+  const pills = document.getElementById('lang-pills-map');
+  if (pills) pills.classList.remove('hidden');
+})();
+</script>
+</body></html>

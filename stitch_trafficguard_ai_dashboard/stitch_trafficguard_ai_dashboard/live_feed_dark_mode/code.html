@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TrafficGuard AI | Live Feed</title>
+<!-- ── Theme bootstrap ── -->
+<script>(function(){document.documentElement.className=localStorage.getItem('tg_theme')||'light';})();</script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="../tg-theme.js" defer></script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glow-blue {
+            box-shadow: 0 0 15px rgba(40, 116, 240, 0.3);
+        }
+        .glow-red {
+            box-shadow: 0 0 15px rgba(186, 26, 26, 0.4);
+        }
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+        .animate-pulse-green {
+            animation: pulse-green 2s infinite;
+        }
+        /* Custom Scrollbar for GitHub Dark Aesthetic */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0D1117; }
+        ::-webkit-scrollbar-thumb { background: #30363D; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #424754; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#afc6ff",
+                        "outline": "#727786",
+                        "on-surface-variant": "#424754",
+                        "background": "#0D1117",
+                        "inverse-surface": "#303030",
+                        "on-surface": "#f3f0ef",
+                        "error": "#ba1a1a",
+                        "primary-container": "#1f6feb",
+                        "surface": "#161B22",
+                        "surface-variant": "#e5e2e1",
+                        "outline-variant": "#30363D",
+                        "primary": "#2874F0",
+                        "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container_max_width": "1440px",
+                        "accent_bar": "3px",
+                        "header_height": "64px",
+                        "margin_desktop": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-h2": ["Inter"],
+                        "plate-display": ["JetBrains Mono"],
+                        "headline-h1": ["Inter"],
+                        "headline-h3": ["Inter"],
+                        "label-caps": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-h2": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "plate-display": ["16px", {"lineHeight": "24px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "headline-h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-h3": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-hidden">
+<!-- TopNavBar (The Anchor) -->
+<header class="fixed top-0 left-0 w-full z-50 h-[64px] bg-[#161B22] border-b border-outline-variant flex items-center justify-between px-6 max-w-container_max_width mx-auto">
+<div class="flex items-center gap-4">
+<div class="bg-primary p-1.5 rounded">
+<span class="material-symbols-outlined text-white text-[24px]">shield</span>
+</div>
+<h1 class="font-headline-h1 text-headline-h1 font-bold text-white tracking-tight">TrafficGuard AI</h1>
+</div>
+<nav class="hidden md:flex h-full items-center gap-8">
+<!-- ACTIVE: Live Feed -->
+<a class="h-full flex items-center text-primary font-bold border-b-[3px] border-primary px-1 translate-y-[1px]" href="#" data-i18n="nav_live">
+                Live Feed
+            </a>
+<a class="text-on-surface-variant font-medium hover:text-white transition-colors" href="../map_view_light_mode/code.html" data-i18n="nav_map">Map</a>
+<a class="text-on-surface-variant font-medium hover:text-white transition-colors" href="../analytics_light_mode/code.html" data-i18n="nav_analytics">Analytics</a>
+<a class="text-on-surface-variant font-medium hover:text-white transition-colors" href="../dispatch_dark_mode/code.html" data-i18n="nav_dispatch">Dispatch</a>
+<a class="text-on-surface-variant font-medium hover:text-white transition-colors" href="../upload_analyze/code.html" data-i18n="nav_upload">Upload &amp; Analyze</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="bg-[#0D1117] border border-outline-variant rounded px-10 py-1.5 text-body-md w-64 focus:border-primary focus:ring-0 transition-all" placeholder="Search vehicle ID..." type="text"/>
+</div>
+<!-- Language Pills -->
+<div class="flex bg-white/10 rounded-full p-0.5 border border-outline-variant" id="lang-pills-dark">
+<button onclick="setLang('KN')" class="lang-pill px-2 py-0.5 text-[10px] font-bold text-outline-variant hover:text-white rounded-full transition-all" data-lang="KN">ಕನ್ನಡ</button>
+<button onclick="setLang('EN')" class="lang-pill px-2 py-0.5 text-[10px] font-bold text-primary bg-white/10 rounded-full" data-lang="EN">EN</button>
+<button onclick="setLang('HI')" class="lang-pill px-2 py-0.5 text-[10px] font-bold text-outline-variant hover:text-white rounded-full transition-all" data-lang="HI">हिं</button>
+</div>
+<button data-theme-toggle class="text-on-surface-variant hover:text-white transition-colors p-1 rounded-full hover:bg-white/10">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<button class="text-on-surface-variant hover:text-white transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a Bengaluru police officer in uniform, sharp focus, neutral background, high-end corporate photography style with cinematic lighting, representing authority and reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHuB1yl0jzMB6HLuUdl-0esMlRqAlrCRFkC_OYIRB9jm8k0q8BY044Ev3ALzw-KFLhuFkrSi-p_b7ZCobUC5P0pqu99pW1XObxBZ1FOa9zVC614eXIWlhOYmBSh3nHFggcI3lBEwnVPycoQ5mmufftCmpXgh-PHz_5MhprEd08eNENZ6adi2d20h7K_eWYHwGP5Hvr3gx2GVDRtZB8FygfjKoPFBa2VoeYi48Te5CiGnzKYbcuevxSZvARHmY51HN_MGDo4xGFlAxx"/>
+</div>
+</div>
+</header>
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-[64px] h-[calc(100vh-64px)] w-[280px] bg-[#161B22] border-r border-outline-variant hidden lg:flex flex-col py-6 px-4 gap-2 z-40">
+<div class="px-4 mb-6">
+<h3 class="font-headline-h3 text-headline-h3 text-white mb-1">BTP Enforcement</h3>
+<p class="text-label-caps font-label-caps text-outline uppercase tracking-widest">Unit-04 Silk Board</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 bg-primary/10 text-primary rounded-lg px-4 py-3 glow-blue" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant/10 rounded-lg px-4 py-3 transition-colors" href="../map_view_light_mode/code.html">
+<span class="material-symbols-outlined">map</span>
+<span class="font-medium">Map View</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant/10 rounded-lg px-4 py-3 transition-colors" href="../analytics_light_mode/code.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-medium">Analytics</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant/10 rounded-lg px-4 py-3 transition-colors" href="../dispatch_dark_mode/code.html">
+<span class="material-symbols-outlined">send</span>
+<span class="font-medium">Dispatch</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant/10 rounded-lg px-4 py-3 transition-colors" href="../upload_analyze/code.html">
+<span class="material-symbols-outlined">upload_file</span>
+<span class="font-medium">Upload &amp; Analyze</span>
+</a>
+</nav>
+<button onclick="window.location.href='../upload_analyze/code.html'" class="mt-4 bg-primary text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-blue-600 transition-all active:scale-95">
+<span class="material-symbols-outlined">add_alert</span>
+            New Alert
+        </button>
+<div class="mt-auto border-t border-outline-variant pt-4 space-y-1">
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant/10 rounded-lg px-4 py-2 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant/10 rounded-lg px-4 py-2 transition-colors" href="../live_feed_light_mode/code.html">
+<span class="material-symbols-outlined">help</span>
+<span class="font-body-md text-body-md">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Grid -->
+<main class="lg:ml-[280px] mt-[64px] h-[calc(100vh-64px)] overflow-y-auto p-6">
+<div class="grid grid-cols-12 gap-6 max-w-container_max_width mx-auto">
+<!-- Left Panel: Live Feed (65%) -->
+<section class="col-span-12 xl:col-span-8 flex flex-col gap-6">
+<!-- Camera Feed Container -->
+<div class="relative bg-black rounded-xl overflow-hidden aspect-video border border-outline-variant group">
+<img class="w-full h-full object-cover opacity-80" data-alt="A high-resolution CCTV camera perspective overlooking a busy metropolitan intersection at night. Car headlights create long exposures of white and red light. The scene is sharp, showing lane markings and traffic signals. Overlaid digital UI elements highlight vehicle boxes and license plate detections in a cyber-noir dark-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVYv4WI0OjvZeAC4dUcUPPa3QrxA994iBGLzuAtBbYrch0AuNwd4TOMdT0gQrz16dq1hxMXcRDmDZHSuS2ruIqfQouUvGINV3t_ZMX-CXYjXKO-AKn7UJW2y2dZQUsQC_qBW0B7Q6dXxi87yuSRl3RZ9iZEaX9jiEKl6zjBILYCn3taRdI4X2L2eqSZ99J6T86A6gRCa6k4Wyp7cRnKKEoXuuCEoJHj0g0xbqFzRYZFN0zCy5SHaN4zC23UyEkLBklbBZrBTrG135Y"/>
+<!-- Overlay Header -->
+<div class="absolute top-0 left-0 w-full p-4 bg-gradient-to-b from-black/80 to-transparent flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 bg-green-500 rounded-full animate-pulse-green"></div>
+<div>
+<h2 class="text-white font-bold leading-none">CAM_047 Silk Board Junction</h2>
+<p class="text-on-surface-variant text-[10px] uppercase font-bold mt-1">Live Feed • 1080p 60fps • 12ms latency</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="bg-black/40 backdrop-blur-md p-2 rounded hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-white">fullscreen</span>
+</button>
+<button class="bg-black/40 backdrop-blur-md p-2 rounded hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-white">videocam</span>
+</button>
+</div>
+</div>
+<!-- AI Recognition Overlay Simulation -->
+<div class="absolute top-1/2 left-1/3 w-32 h-20 border-2 border-primary/60 rounded glow-blue pointer-events-none">
+<div class="absolute -top-6 left-0 bg-primary text-[10px] text-white px-1 font-bold">CAR 88% • KA 01 MJ 1234</div>
+</div>
+</div>
+<!-- Bottom Stats Strip -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="bg-surface border border-outline-variant p-4 rounded-xl">
+<p class="text-label-caps text-outline uppercase font-label-caps mb-1">Vehicles Scanned (1h)</p>
+<div class="flex items-end justify-between">
+<h3 class="text-2xl font-black text-primary">12,482</h3>
+<span class="text-green-500 text-xs font-bold">+14% ↑</span>
+</div>
+</div>
+<div class="bg-surface border border-outline-variant p-4 rounded-xl">
+<p class="text-label-caps text-outline uppercase font-label-caps mb-1">Active Violations</p>
+<div class="flex items-end justify-between">
+<h3 class="text-2xl font-black text-secondary-container">142</h3>
+<span class="text-on-surface-variant text-xs">Peak Hour</span>
+</div>
+</div>
+<div class="bg-surface border border-outline-variant p-4 rounded-xl">
+<p class="text-label-caps text-outline uppercase font-label-caps mb-1">Average Speed</p>
+<div class="flex items-end justify-between">
+<h3 class="text-2xl font-black text-on-tertiary-container">42 km/h</h3>
+<span class="text-red-500 text-xs font-bold">-8% ↓</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Panel: Alerts (35%) -->
+<aside class="col-span-12 xl:col-span-4 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-h2 text-headline-h2 text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-container">warning</span>
+                        Live Violations
+                    </h2>
+<span class="bg-primary/20 text-primary text-[10px] px-2 py-1 rounded font-black uppercase">Real-time</span>
+</div>
+<!-- Alert Feed -->
+<div class="flex flex-col gap-4 overflow-y-auto max-h-[calc(100vh-220px)] pr-2">
+<!-- REOFFENDER CARD (CRITICAL) -->
+<div class="bg-[#1A0000] border-4 border-error rounded-xl p-4 glow-red transition-transform hover:scale-[1.02] cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<span class="bg-error text-white text-[10px] font-black px-2 py-0.5 rounded uppercase">Critical Reoffender</span>
+<span class="text-on-surface-variant text-xs">2m ago</span>
+</div>
+<div class="flex gap-4">
+<div class="w-20 h-20 bg-black rounded border border-error/50 overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A close-up shot of a white SUV license plate, blurred movement in background, high-contrast night vision style, numbers 'KA 03 MK 5522' clearly visible, sharp lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-lf7Tc8ch6BQfyEbsqwIf8S8L1NrVEsjSackK4ioY3ZczqoZjopni5ds8sU-Ej09lcSbvbP3tRxPjNHSjb9xS4gYOrwVQJ4B-jxzA4f-oFRVMK8NRq0LTxB6k2nD9xmGvQZzb96ZWH_eIUiSTcrhquXCVpR8I0fTZ4O1uIKYoTTyLMrMvEqpxdmgsWiG90X2uGcwRIwoxEp3W3L_EAAgq_-S3MyxzRkybpyLLHinSI6TsuCrWQlK8eIvpVzH82YyLF0_jsgi6FpTd"/>
+</div>
+<div class="flex-1">
+<h4 class="font-plate-display text-plate-display text-white mb-1">KA 03 MK 5522</h4>
+<p class="text-error font-bold text-sm">Signal Jump (3rd Strike)</p>
+<p class="text-on-surface-variant text-xs mt-1">Vehicle: Toyota Fortuner • White</p>
+</div>
+</div>
+<div class="mt-4 flex gap-2">
+<button class="flex-1 bg-error text-white text-xs font-bold py-2 rounded hover:brightness-110">DISPATCH INTERCEPT</button>
+<button class="bg-white/10 text-white p-2 rounded hover:bg-white/20">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Regular Violation 1 -->
+<div class="bg-surface border border-outline-variant rounded-xl p-4 hover:border-primary transition-all group">
+<div class="flex justify-between items-start mb-3">
+<span class="bg-secondary-container text-black text-[10px] font-black px-2 py-0.5 rounded uppercase">Speeding</span>
+<span class="text-on-surface-variant text-xs">5m ago</span>
+</div>
+<div class="flex gap-4">
+<div class="w-20 h-20 bg-black rounded border border-outline-variant overflow-hidden shrink-0">
+<img class="w-full h-full object-cover group-hover:opacity-80" data-alt="Dark gray sedan traveling fast, blurred wheels, night scene, captured by overhead traffic enforcement camera, clinical lighting, focus on vehicle rear and license plate." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2snIy1jLhpVW5xDoDB1aAh3FADTq9tDXNLNznzY-Q5e5gHQmrkEBtcCMRf13972D4kTh3dtaqFUI1uPVVAiG6KRg3SFdvpORpCRqRL8GiQBM6NS24kdgu51vVEiwgtHoFP_4qz9_an1PPUAeDnBaLzYiLpLNbsbKanGBnO0_F5WKPLqVSfKnp1IKYBLXG8KrPIjgnQU16wzQ3oUA4VZAGMSWy0oLckz4CBaYi19AAiYtlM4MRr0FlM2BR9zQWiuFjf5Nut-h4oNbI"/>
+</div>
+<div class="flex-1">
+<h4 class="font-plate-display text-plate-display text-white mb-1">KA 51 MB 9901</h4>
+<p class="text-secondary-container font-bold text-sm">84 km/h in 60 km/h Zone</p>
+<p class="text-on-surface-variant text-xs mt-1">Status: E-Challan Pending</p>
+</div>
+</div>
+</div>
+<!-- Regular Violation 2 -->
+<div class="bg-surface border border-outline-variant rounded-xl p-4 hover:border-primary transition-all group">
+<div class="flex justify-between items-start mb-3">
+<span class="bg-primary-container text-white text-[10px] font-black px-2 py-0.5 rounded uppercase">No Helmet</span>
+<span class="text-on-surface-variant text-xs">12m ago</span>
+</div>
+<div class="flex gap-4">
+<div class="w-20 h-20 bg-black rounded border border-outline-variant overflow-hidden shrink-0">
+<img class="w-full h-full object-cover group-hover:opacity-80" data-alt="Two riders on a black motorcycle, rear rider clearly visible without helmet, busy urban street background, sharp focus on heads, CCTV monochrome style with high clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDqpz1cA3xwKk2zN1o-9zGzHrgkrkgVOzrTrYg_PsqY9fGCXL1N0NRZDN39PxuBIMynwLeWsfZdSzvo9UAvmCQqaukph1RdWP4mBInpeyMQtTh-w5vJV0_HmMpUU_rM3McFjsc4ufSyh2NV4K3GuOaS0eyB-bmmODvSxYrNjyVWAWSFYYviRZNqiIelfjZQ0Vj4JDxHhrxzVI3jKdFIne_g1nfVw49BKb-fb5uQBtz0ax6vq859DQBRuSXd13fS8iTxXD5l4ZDUdT7"/>
+</div>
+<div class="flex-1">
+<h4 class="font-plate-display text-plate-display text-white mb-1">KA 05 JJ 4432</h4>
+<p class="text-primary-fixed-dim font-bold text-sm">Pillion Rider Violation</p>
+<p class="text-on-surface-variant text-xs mt-1">Owner: Rajesh Kumar</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Action FAB -->
+<div class="mt-auto pt-4 border-t border-outline-variant flex flex-col gap-2">
+<button class="w-full bg-[#161B22] border border-outline-variant text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-surface-variant/10 transition-colors">
+<span class="material-symbols-outlined">history</span>
+                        View Today's Log
+                    </button>
+</div>
+</aside>
+</div>
+</main>
+<!-- Micro-interaction Scripts -->
+<script>
+        // Simulation of real-time data updates
+        setInterval(() => {
+            const stats = document.querySelectorAll('h3');
+            stats.forEach(stat => {
+                if(stat.innerText.includes(',')) {
+                    const current = parseInt(stat.innerText.replace(',', ''));
+                    stat.innerText = (current + Math.floor(Math.random() * 3)).toLocaleString();
+                }
+            });
+        }, 3000);
+
+        // Click effect for violation cards
+        document.querySelectorAll('.cursor-pointer').forEach(card => {
+            card.addEventListener('mousedown', () => card.style.transform = 'scale(0.98)');
+            card.addEventListener('mouseup', () => card.style.transform = 'scale(1.02)');
+        });
+    </script>
+<script>
+// ─── Shared i18n for Live Feed Dark ─────────────────
+const TG_TRANSLATIONS = {
+  EN: { nav_live:"Live Feed", nav_map:"Map", nav_analytics:"Analytics", nav_dispatch:"Dispatch", nav_upload:"Upload & Analyze" },
+  KN: { nav_live:"ನೇರ ಪ್ರಸಾರ", nav_map:"ನಕ್ಷೆ", nav_analytics:"ವಿಶ್ಲೇಷಣೆ", nav_dispatch:"ರವಾನೆ", nav_upload:"ಅಪ್‌ಲೋಡ್ ಮತ್ತು ವಿಶ್ಲೇಷಿಸಿ" },
+  HI: { nav_live:"लाइव फ़ीड", nav_map:"मानचित्र", nav_analytics:"विश्लेषण", nav_dispatch:"डिस्पैच", nav_upload:"अपलोड और विश्लेषण करें" }
+};
+function setLang(lang) {
+  localStorage.setItem('tg_lang', lang);
+  const t = TG_TRANSLATIONS[lang] || TG_TRANSLATIONS.EN;
+  document.querySelectorAll('[data-i18n]').forEach(el => { if(t[el.dataset.i18n]) el.textContent = t[el.dataset.i18n]; });
+  document.querySelectorAll('.lang-pill').forEach(p => {
+    const active = p.dataset.lang === lang;
+    p.className = 'lang-pill px-2 py-0.5 text-[10px] font-bold rounded-full transition-all ' +
+      (active ? 'text-primary bg-white/10' : 'text-outline-variant hover:text-white');
+  });
+}
+(function(){ setLang(localStorage.getItem('tg_lang') || 'EN'); })();
+</script>
+</body></html>
