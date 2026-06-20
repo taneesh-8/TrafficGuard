@@ -38,7 +38,6 @@ services:
     runtime: static
     staticPublishPath: stitch_trafficguard_ai_dashboard/stitch_trafficguard_ai_dashboard
     buildCommand: echo "static"
-    plan: free
     routes:
       - type: rewrite
         source: /*
