@@ -4,7 +4,7 @@ services:
     name: trafficguard-backend
     runtime: python
     rootDir: trafficguard_backend
-    buildCommand: pip install -r requirements.txt
+    buildCommand: bash build.sh
     startCommand: bash render_start.sh
     plan: free
     envVars:
