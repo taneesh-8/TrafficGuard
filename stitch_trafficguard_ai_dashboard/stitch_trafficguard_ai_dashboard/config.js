@@ -8,7 +8,7 @@
  * set window.TRAFFICGUARD_API_BASE before this script loads.
  */
 window.TRAFFICGUARD_API_BASE = window.TRAFFICGUARD_API_BASE
-  || "https://trafficguard-backend.onrender.com";   // ← Render will replace this
+  || "https://trafficguard-backend.onrender.com";
 
 // Fallback to localhost when running locally (the Render URL won't respond)
 (function() {
