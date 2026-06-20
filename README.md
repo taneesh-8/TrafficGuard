@@ -1,4 +1,4 @@
-# TrafficGuard AI 2.0
+# TrafficGuard 
 
 AI-powered traffic violation detection system for Bengaluru Traffic Police.
 
