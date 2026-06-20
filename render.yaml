@@ -7,7 +7,6 @@ services:
     buildCommand: bash build.sh
     startCommand: bash render_start.sh
     plan: free
-    pythonVersion: "3.11.9"
     envVars:
       - key: GEMINI_API_KEY
         sync: false
