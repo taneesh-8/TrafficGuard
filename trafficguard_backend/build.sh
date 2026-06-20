@@ -1,17 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
-# Install system dependencies needed by OpenCV headless on Ubuntu
-apt-get update -qq && apt-get install -y -qq \
-    libglib2.0-0 \
-    libsm6 \
-    libxrender1 \
-    libxext6 \
-    libgl1 \
-    2>/dev/null || true
-
-# Install Python dependencies
 pip install --upgrade pip
-pip install -r requirements.txt
+
+# Install pydantic-core from pre-built wheel before anything else
+# (avoids Rust compilation which fails on Render's read-only cargo cache)
+pip install "pydantic-core==2.27.1" --only-binary :all:
+
+# Install everything else
+pip install -r requirements.txt --only-binary pydantic-core,numpy
 
 echo "Build complete."
