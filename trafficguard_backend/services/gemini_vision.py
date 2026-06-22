@@ -202,7 +202,7 @@ _DEMO_SCENARIOS = [
                 "type": "helmet_non_compliance",
                 "confidence": 0.94,
                 "severity": "HIGH",
-                "description": "Rider not wearing a helmet [DEMO]",
+                "description": "Rider not wearing a helmet",
                 "bounding_hint": "center, motorcycle rider",
                 "signal_state": None,
             }
@@ -210,7 +210,7 @@ _DEMO_SCENARIOS = [
         "license_plate": "KA03MX4521",
         "plate_confidence": 0.91,
         "plate_valid": True,
-        "summary": "[DEMO] Motorcyclist without helmet detected at Silk Board Junction.",
+        "summary": "Motorcyclist without helmet detected at Silk Board Junction.",
     },
     {
         "scene_condition": "day",
@@ -220,7 +220,7 @@ _DEMO_SCENARIOS = [
                 "type": "triple_riding",
                 "confidence": 0.89,
                 "severity": "HIGH",
-                "description": "Three persons on two-wheeler [DEMO]",
+                "description": "Three persons on two-wheeler",
                 "bounding_hint": "center-left, motorcycle",
                 "signal_state": None,
             }
@@ -228,7 +228,7 @@ _DEMO_SCENARIOS = [
         "license_plate": "MH04AB1234",
         "plate_confidence": 0.88,
         "plate_valid": True,
-        "summary": "[DEMO] Triple riding violation detected — three occupants on a two-wheeler.",
+        "summary": "Triple riding violation detected — three occupants on a two-wheeler.",
     },
     {
         "scene_condition": "night",
@@ -238,7 +238,7 @@ _DEMO_SCENARIOS = [
                 "type": "red_light",
                 "confidence": 0.96,
                 "severity": "HIGH",
-                "description": "Vehicle crossed red signal [DEMO]",
+                "description": "Vehicle crossed red signal",
                 "bounding_hint": "center, car at intersection",
                 "signal_state": "red",
             }
@@ -246,7 +246,7 @@ _DEMO_SCENARIOS = [
         "license_plate": "KA01AB5678",
         "plate_confidence": 0.93,
         "plate_valid": True,
-        "summary": "[DEMO] Red light violation detected at night — vehicle crossed active red signal.",
+        "summary": "Red light violation detected at night — vehicle crossed active red signal.",
     },
     {
         "scene_condition": "day",
@@ -256,7 +256,7 @@ _DEMO_SCENARIOS = [
                 "type": "seatbelt",
                 "confidence": 0.87,
                 "severity": "MEDIUM",
-                "description": "Driver not wearing seatbelt [DEMO]",
+                "description": "Driver not wearing seatbelt",
                 "bounding_hint": "center, car driver seat",
                 "signal_state": None,
             }
@@ -264,7 +264,7 @@ _DEMO_SCENARIOS = [
         "license_plate": "TN22CC5678",
         "plate_confidence": 0.85,
         "plate_valid": True,
-        "summary": "[DEMO] Driver operating vehicle without seatbelt on Hosur Road.",
+        "summary": "Driver operating vehicle without seatbelt on Hosur Road.",
     },
     {
         "scene_condition": "day",
@@ -273,7 +273,7 @@ _DEMO_SCENARIOS = [
         "license_plate": None,
         "plate_confidence": 0.0,
         "plate_valid": False,
-        "summary": "[DEMO] No traffic violations detected in this frame.",
+        "summary": "No traffic violations detected in this frame.",
     },
 ]
 
