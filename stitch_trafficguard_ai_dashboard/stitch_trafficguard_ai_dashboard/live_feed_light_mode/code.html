@@ -571,7 +571,7 @@
 
 <!-- Violation Card 1 (HIGH) -->
 
-<div class="bg-surface-container-lowest border-l-4 border-l-error border border-outline-variant rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+<div class="bg-surface-container-lowest border-l-4 border-l-error border border-outline-variant rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow" data-violation-card data-severity="HIGH">
 
 <div class="flex justify-between items-start mb-3">
 
@@ -615,7 +615,7 @@
 
 <!-- Violation Card 2 (MEDIUM) -->
 
-<div class="bg-surface-container-lowest border-l-4 border-l-secondary-fixed-dim border border-outline-variant rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+<div class="bg-surface-container-lowest border-l-4 border-l-secondary-fixed-dim border border-outline-variant rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow" data-violation-card data-severity="MEDIUM">
 
 <div class="flex justify-between items-start mb-3">
 
@@ -651,7 +651,7 @@
 
 <!-- Violation Card 3 (REPEAT OFFENDER) -->
 
-<div class="bg-error-container/40 border-l-4 border-l-error border border-error/20 rounded-lg p-4 shadow-sm relative overflow-hidden">
+<div class="bg-error-container/40 border-l-4 border-l-error border border-error/20 rounded-lg p-4 shadow-sm relative overflow-hidden" data-violation-card data-severity="HIGH">
 
 <div class="absolute -right-6 -top-6 rotate-12 opacity-5 pointer-events-none">
 
@@ -914,23 +914,47 @@ function showEvidenceModal(data) {
 document.addEventListener('click', function(e) {
     var btn = e.target.closest('button');
     if (!btn) return;
-    var label = (btn.textContent || btn.innerText || '').replace(/\s+/g,' ').trim();
+    var label = (btn.textContent || '').replace(/\s+/g, ' ').trim();
 
+    // Evidence / Review button
     if (label.includes('Evidence') || label.includes('Review')) {
-        var card = btn.closest('.border-l-4, [class*="border-l-4"]') ||
-                   btn.closest('[class*="border-l-error"]') ||
-                   btn.closest('[class*="border-error"]');
-        if (!card) { card = btn.closest('div.rounded-lg'); }
+        // Use data-violation-card attr (most reliable), fall back to class-based search
+        var card = btn.closest('[data-violation-card]')
+                || btn.closest('[class*="border-l-4"]')
+                || btn.closest('div.rounded-lg');
         if (!card) return;
-        var plateEl = card.querySelector('[class*="font-plate-display"], .font-plate-display');
+        var sev = (card.dataset && card.dataset.severity) || 'HIGH';
+        var plateEl = card.querySelector('[class*="font-plate-display"]')
+                   || card.querySelector('[class*="tracking-widest"]');
         var titleEl = card.querySelector('h3');
-        var confEl  = card.querySelector('[class*="text-on-surface-variant"]');
         showEvidenceModal({
             plate:    plateEl ? plateEl.textContent.trim() : '',
             type:     titleEl ? titleEl.textContent.trim() : '',
-            conf:     confEl  ? confEl.textContent.trim()  : '',
-            severity: (card.className || '').includes('error') ? 'HIGH' : 'MEDIUM',
+            conf:     '',
+            severity: sev,
         });
+        return;
+    }
+
+    // Challan button
+    if (label.includes('Challan')) {
+        var t = document.createElement('div');
+        t.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#006b22;color:#fff;padding:12px 24px;border-radius:8px;font-weight:700;z-index:9999;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,.2)';
+        t.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Challan queued — submit via Upload &amp; Analyze to issue automatically';
+        document.body.appendChild(t);
+        setTimeout(function() { t.remove(); }, 3500);
+        return;
+    }
+
+    // Flag Unit button
+    if (label.includes('Flag Unit')) {
+        var t2 = document.createElement('div');
+        t2.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#ba1a1a;color:#fff;padding:12px 24px;border-radius:8px;font-weight:700;z-index:9999;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,.2)';
+        t2.innerHTML = '<span class="material-symbols-outlined">warning</span> Unit flagged for immediate dispatch';
+        document.body.appendChild(t2);
+        setTimeout(function() { t2.remove(); }, 3000);
+    }
+});
         return;
     }
 
