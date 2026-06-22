@@ -315,6 +315,9 @@ tailwind.config = {
           <!-- Summary -->
           <div class="mb-5 p-4 rounded-lg bg-primary-fixed/40 border border-primary/10">
             <p class="font-label-caps text-label-caps text-primary uppercase mb-1" data-i18n="label_summary">Summary</p>
+            <div id="demo-badge" class="hidden mb-2 inline-flex items-center gap-1.5 bg-secondary-container text-on-secondary-container text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide">
+              <span class="material-symbols-outlined text-[12px]">science</span> Demo Mode — No API key active
+            </div>
             <p id="res-summary" class="text-body-md italic text-on-surface"></p>
           </div>
 
@@ -790,7 +793,14 @@ function renderResults(d) {
     });
 
     // Summary
-    document.getElementById('res-summary').textContent = d.summary || '';
+    const summary = d.summary || '';
+    document.getElementById('res-summary').textContent = summary.replace('[DEMO] ', '').replace('[DEMO]', '');
+    const demoBadge = document.getElementById('demo-badge');
+    if (summary.includes('[DEMO]')) {
+      demoBadge.classList.remove('hidden');
+    } else {
+      demoBadge.classList.add('hidden');
+    }
 
     // Status pills
     const challEl  = document.getElementById('res-challan-pill');

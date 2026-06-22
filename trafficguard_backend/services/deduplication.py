@@ -44,7 +44,7 @@ async def find_existing_case(
         """,
         (plate, camera_id, cutoff_str),
     ) as cursor:
-        row = cursor.fetchone() if hasattr(cursor, "fetchone") else await cursor.fetchone()
+        row = await cursor.fetchone()
 
     if row is None:
         return None

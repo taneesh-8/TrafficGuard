@@ -15,6 +15,8 @@ Model: gemini-1.5-flash  (configurable via GEMINI_VISION_MODEL env var)
 from __future__ import annotations
 import json
 import logging
+import os
+import random
 import re
 from typing import Any
 
@@ -134,31 +136,158 @@ async def analyze_image(image_bytes: bytes) -> tuple[dict[str, Any], bytes, byte
     """
     Analyze a traffic image via Gemini Vision.
 
+    Falls back to a realistic demo response when:
+    - GEMINI_API_KEY is missing
+    - Quota is exhausted (429)
+    - DEMO_MODE=true env var is set
+
     Returns
     -------
     result         : parsed detection dict
     raw_bytes      : original image bytes
     enhanced_bytes : CLAHE/denoised bytes if a second pass was done, else None
     """
-    model = _get_model()
-    enhanced_bytes: bytes | None = None
+    # ── Demo mode check ──────────────────────────────────────────────────────
+    demo_forced = os.getenv("DEMO_MODE", "false").lower() == "true"
+    if demo_forced or not GEMINI_API_KEY:
+        log.warning("Demo mode active — returning synthetic violation data")
+        return _demo_response(image_bytes), image_bytes, None
 
-    # Pass 1 — raw frame
-    result = _call_gemini(model, image_bytes, "pass-1")
-    scene  = (result.get("scene_condition") or "").lower()
+    # ── Real Gemini path ─────────────────────────────────────────────────────
+    try:
+        model = _get_model()
+        enhanced_bytes: bytes | None = None
 
-    # Enhancement check
-    lum = mean_luminance(image_bytes)
-    needs_enhancement = scene in {"night", "blur", "rain", "fog"} or lum < LOW_LIGHT_THRESHOLD
+        # Pass 1 — raw frame
+        result = _call_gemini(model, image_bytes, "pass-1")
+        scene  = (result.get("scene_condition") or "").lower()
 
-    if needs_enhancement:
-        log.info("Scene='%s' / lum=%.1f → CLAHE/denoise pass", scene, lum)
-        enhanced_bytes = enhance_frame(image_bytes, scene)
-        result = _call_gemini(model, enhanced_bytes, "pass-2")
+        # Enhancement check — only do pass-2 if ENABLE_TWO_PASS is set (saves API quota)
+        ENABLE_TWO_PASS = os.getenv("ENABLE_TWO_PASS", "false").lower() == "true"
+        lum = mean_luminance(image_bytes)
+        needs_enhancement = ENABLE_TWO_PASS and (
+            scene in {"night", "blur", "rain", "fog"} or lum < LOW_LIGHT_THRESHOLD
+        )
 
-    # Sanitise
-    result["violations"]     = _clean_violations(result.get("violations") or [])
-    result["vehicles"]       = result.get("vehicles") or []
-    result["scene_condition"] = result.get("scene_condition", "day")
+        if needs_enhancement:
+            log.info("Scene='%s' / lum=%.1f → CLAHE/denoise pass", scene, lum)
+            enhanced_bytes = enhance_frame(image_bytes, scene)
+            result = _call_gemini(model, enhanced_bytes, "pass-2")
 
-    return result, image_bytes, enhanced_bytes
+        # Sanitise
+        result["violations"]      = _clean_violations(result.get("violations") or [])
+        result["vehicles"]        = result.get("vehicles") or []
+        result["scene_condition"] = result.get("scene_condition", "day")
+
+        return result, image_bytes, enhanced_bytes
+
+    except Exception as exc:
+        err_str = str(exc)
+        # On quota exhaustion fall back to demo instead of crashing
+        if "429" in err_str or "quota" in err_str.lower() or "RESOURCE_EXHAUSTED" in err_str:
+            log.warning("Gemini quota exhausted — falling back to demo mode: %s", err_str[:120])
+            return _demo_response(image_bytes), image_bytes, None
+        raise
+
+
+# ── Demo response generator ────────────────────────────────────────────────────
+# Produces realistic but synthetic violation data so the UI is fully demonstrable
+# without spending any API quota.  Labelled [DEMO] in the summary.
+_DEMO_SCENARIOS = [
+    {
+        "scene_condition": "day",
+        "vehicles": [{"type": "motorcycle", "count": 1}],
+        "violations": [
+            {
+                "type": "helmet_non_compliance",
+                "confidence": 0.94,
+                "severity": "HIGH",
+                "description": "Rider not wearing a helmet [DEMO]",
+                "bounding_hint": "center, motorcycle rider",
+                "signal_state": None,
+            }
+        ],
+        "license_plate": "KA03MX4521",
+        "plate_confidence": 0.91,
+        "plate_valid": True,
+        "summary": "[DEMO] Motorcyclist without helmet detected at Silk Board Junction.",
+    },
+    {
+        "scene_condition": "day",
+        "vehicles": [{"type": "motorcycle", "count": 1}],
+        "violations": [
+            {
+                "type": "triple_riding",
+                "confidence": 0.89,
+                "severity": "HIGH",
+                "description": "Three persons on two-wheeler [DEMO]",
+                "bounding_hint": "center-left, motorcycle",
+                "signal_state": None,
+            }
+        ],
+        "license_plate": "MH04AB1234",
+        "plate_confidence": 0.88,
+        "plate_valid": True,
+        "summary": "[DEMO] Triple riding violation detected — three occupants on a two-wheeler.",
+    },
+    {
+        "scene_condition": "night",
+        "vehicles": [{"type": "car", "count": 1}],
+        "violations": [
+            {
+                "type": "red_light",
+                "confidence": 0.96,
+                "severity": "HIGH",
+                "description": "Vehicle crossed red signal [DEMO]",
+                "bounding_hint": "center, car at intersection",
+                "signal_state": "red",
+            }
+        ],
+        "license_plate": "KA01AB5678",
+        "plate_confidence": 0.93,
+        "plate_valid": True,
+        "summary": "[DEMO] Red light violation detected at night — vehicle crossed active red signal.",
+    },
+    {
+        "scene_condition": "day",
+        "vehicles": [{"type": "car", "count": 1}],
+        "violations": [
+            {
+                "type": "seatbelt",
+                "confidence": 0.87,
+                "severity": "MEDIUM",
+                "description": "Driver not wearing seatbelt [DEMO]",
+                "bounding_hint": "center, car driver seat",
+                "signal_state": None,
+            }
+        ],
+        "license_plate": "TN22CC5678",
+        "plate_confidence": 0.85,
+        "plate_valid": True,
+        "summary": "[DEMO] Driver operating vehicle without seatbelt on Hosur Road.",
+    },
+    {
+        "scene_condition": "day",
+        "vehicles": [],
+        "violations": [],
+        "license_plate": None,
+        "plate_confidence": 0.0,
+        "plate_valid": False,
+        "summary": "[DEMO] No traffic violations detected in this frame.",
+    },
+]
+
+
+def _demo_response(image_bytes: bytes) -> dict[str, Any]:
+    """
+    Pick a demo scenario deterministically based on image size
+    so the same image always returns the same scenario, but
+    different images get different results.
+    """
+    # Use image size mod to pick scenario (gives variety without randomness)
+    idx = len(image_bytes) % (len(_DEMO_SCENARIOS) - 1)  # exclude no-violation for most
+    scenario = _DEMO_SCENARIOS[idx].copy()
+    scenario["violations"] = _clean_violations(scenario.get("violations") or [])
+    scenario["vehicles"]   = scenario.get("vehicles") or []
+    log.info("Demo response: scenario=%d violations=%d", idx, len(scenario["violations"]))
+    return scenario
